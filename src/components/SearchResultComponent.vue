@@ -15,10 +15,10 @@
         <span style="color: green;">✔</span> Test passed
       </div>
       <div v-else-if="testResult === 'fail'">
-        <span style="color: green;">❌</span> Test failed
+        <span style="color: red;">❌</span> Test failed
       </div>
       <div v-else-if="testResult === 'error'">
-        <span style="color: green;">❌</span> Test error
+        <span style="color: red;">❌</span> Test error
       </div>
     </td>
   </tr>
