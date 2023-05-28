@@ -30,7 +30,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, useStore } from 'vuex';
+import { useRoute } from 'vue-router';
+import { watch } from 'vue';
 
 import SearchComponent from './components/SearchComponent.vue';
 import SearchResultComponent from './components/SearchResultComponent.vue';
@@ -48,6 +50,17 @@ export default {
     performSearch(steamID) {
       this.$store.dispatch('performSearch', steamID);
     },
+  },
+  setup() {
+    const route = useRoute();
+    const store = useStore();
+
+    watch(() => route.query, (newQuery, oldQuery) => {
+      const steamId = newQuery?.steamid;
+      if (steamId) {
+        store.dispatch('performSearch', steamId);
+      }
+    });
   },
 };
 </script>
