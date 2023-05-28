@@ -42,8 +42,8 @@
     },
     {
       "url": "https://sirplease.gg/index.php?p=banlist&advType=steamid&advSearch=",
-      "selector": "//table[contains(@class, 'listtable')]",
-      "selectorIndex": 3,
+      "selector": "//ul[@class='ban_list_detal']",
+      "selectorIndex": 0,
       "example": "https://sirplease.gg/index.php?p=banlist&advType=steamid&advSearch=STEAM_1:1:628358009",
       "domain": "sirplease.gg",
       "country": "United States",
@@ -62,8 +62,8 @@
     },
     {
       "url": "https://www.vidyagaems.net/sourcebans/index.php?p=banlist&advType=steamid&advSearch=",
-      "selector": "//table[contains(@class, 'listtable')]",
-      "selectorIndex": 3,
+      "selector": "//ul[@class='ban_list_detal']",
+      "selectorIndex": 0,
       "example": "https://www.vidyagaems.net/sourcebans/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:455326479",
       "domain": "vidyagaems.net",
       "country": "Argentina",
@@ -102,8 +102,8 @@
     },
     {
       "url": "https://bans.svdosbrothers.com/index.php?p=banlist&advType=steamid&advSearch=",
-      "selector": "//table[contains(@class, 'listtable')]",
-      "selectorIndex": 3,
+      "selector": "//ul[@class='ban_list_detal']",
+      "selectorIndex": 0,
       "example": "https://bans.svdosbrothers.com/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:48104092",
       "domain": "svdosbrothers.com",
       "country": "Brazil",
@@ -142,8 +142,8 @@
     },
     {
       "url": "https://bans.savageservidores.com/index.php?p=banlist&advType=steamid&advSearch=",
-      "selector": "//table[contains(@class, 'listtable')]",
-      "selectorIndex": 3,
+      "selector": "//ul[@class='ban_list_detal']",
+      "selectorIndex": 0,
       "example": "https://bans.savageservidores.com/index.php?p=banlist&advType=steamid&advSearch=STEAM_1:1:237104029",
       "domain": "savageservidores.com",
       "country": "Brazil",
