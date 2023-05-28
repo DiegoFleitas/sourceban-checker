@@ -1,0 +1,154 @@
+{
+  "servers": [
+    {
+      "url": "https://www.skial.com/sourcebans/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://www.skial.com/sourcebans/index.php?p=banlist&advType=steamid&advSearch=[U:1:1407862404]",
+      "domain": "skial.com",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.5.3"
+    },
+    {
+      "url": "https://lazypurple.com/sourcebans/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://lazypurple.com/sourcebans/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:64716503",
+      "domain": "lazypurple.com",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.8.0"
+    },
+    {
+      "url": "https://sourcebans.servilive.cl/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//ul[@class='ban_list_detal']",
+      "selectorIndex": 0,
+      "example": "https://sourcebans.servilive.cl/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:0:766005151",
+      "domain": "servilive.cl",
+      "country": "Chile",
+      "region": "South America",
+      "version": "1.8.0"
+    },
+    {
+      "url": "http://bans.zmbrasil.com.br/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "http://bans.zmbrasil.com.br/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:455326479",
+      "domain": "zmbrasil.com.br",
+      "country": "Brazil",
+      "region": "South America",
+      "version": "1.6.3"
+    },
+    {
+      "url": "https://sirplease.gg/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://sirplease.gg/index.php?p=banlist&advType=steamid&advSearch=STEAM_1:1:628358009",
+      "domain": "sirplease.gg",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.7.0"
+    },
+    {
+      "url": "https://sourcebans.gflclan.com/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://sourcebans.gflclan.com/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:0:211022",
+      "domain": "gflclan.com",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.7.0"
+    },
+    {
+      "url": "https://www.vidyagaems.net/sourcebans/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://www.vidyagaems.net/sourcebans/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:455326479",
+      "domain": "vidyagaems.net",
+      "country": "Argentina",
+      "region": "South America",
+      "version": "1.8.0"
+    },
+    {
+      "url": "https://sg-gaming.net/bans/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://sg-gaming.net/bans/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:0:703931202",
+      "domain": "sg-gaming.net",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.8.0"
+    },
+    {
+      "url": "https://sourcebans.apemode.tf/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://sourcebans.apemode.tf/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:0:713296680",
+      "domain": "apemode.tf",
+      "country": "Australia",
+      "region": "Oceania",
+      "version": "1.6.3"
+    },
+    {
+      "url": "https://bans.maxdb.net/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://bans.maxdb.net/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:0:557409238",
+      "domain": "maxdb.net",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.7.0"
+    },
+    {
+      "url": "https://bans.svdosbrothers.com/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://bans.svdosbrothers.com/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:48104092",
+      "domain": "svdosbrothers.com",
+      "country": "Brazil",
+      "region": "South America",
+      "version": "1.8.0"
+    },
+    {
+      "url": "http://dumcit.d-srv.com/dcsb/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "http://dumcit.d-srv.com/dcsb/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:712519131",
+      "domain": "d-srv.com",
+      "country": "South Korea",
+      "region": "East Asia",
+      "version": "1.6.4"
+    },
+    {
+      "url": "http://168.181.184.179/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//ul[@class='ban_list_detal']",
+      "selectorIndex": 0,
+      "example": "http://168.181.184.179/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:452330770",
+      "domain": "electricservers.com.ar",
+      "country": "Argentina",
+      "region": "South America",
+      "version": "1.7.0"
+    },
+    {
+      "url": "https://bans.theglobalparadise.org/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://bans.theglobalparadise.org/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:104983617",
+      "domain": "theglobalparadise.org",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.8.0"
+    },
+    {
+      "url": "https://bans.savageservidores.com/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://bans.savageservidores.com/index.php?p=banlist&advType=steamid&advSearch=STEAM_1:1:237104029",
+      "domain": "savageservidores.com",
+      "country": "Brazil",
+      "region": "South America",
+      "version": "1.7.0"
+    }
+  ]
+}
