@@ -6,7 +6,17 @@
       }}</a>
     </td>
     <td>{{ search.status }}</td>
-    <td>{{ search.result }}</td>
+    <td>
+      <a
+        v-if="search.result === 'Banned'"
+        :href="removeProxyFromUrl(search.url)"
+        target="_blank"
+        style="color: red;"
+      >
+        {{ search.result }}
+      </a>
+      <span v-else>{{ search.result }}</span>
+    </td>
     <td>
       <button @click="testSearch" class="test-button">Test</button>
     </td>
