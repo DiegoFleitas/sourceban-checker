@@ -5,11 +5,27 @@
       @search="performSearch"
       msg="Search SourceBans++ banlists"
     />
-    <SearchResultComponent
-      v-for="(search, index) in searches"
-      :key="index"
-      :search="search"
-    />
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>URL</th>
+            <th>Status</th>
+            <th>Result</th>
+            <th>Test</th>
+            <th>Test Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          <SearchResultComponent
+            v-for="(search, index) in searches"
+            :key="index"
+            :search="search"
+            :index="index"
+          />
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -44,5 +60,24 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+.table-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+th, td {
+  width: 20%;
+  text-align: center; 
+  padding: 5px; 
+  border: 1px solid black;
 }
 </style>
