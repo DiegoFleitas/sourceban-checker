@@ -413,10 +413,10 @@
       "version": "1.0.0"
     },
     {
-      "url": "https://bans.titan.tf/index.php?p=banlist&advSearch=",
+      "url": "https://bans.titan.tf/index.php?p=banlist&advType=steamid&advSearch=",
       "selector": "//table[contains(@class, 'listtable')]",
       "selectorIndex": 3,
-      "example": "https://bans.titan.tf/index.php?p=banlist&advSearch=%20STEAM_0:1:713749043%20&advType=steamid",
+      "example": "https://bans.titan.tf/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:713749043",
       "domain": "bans.titan.tf",
       "country": "United States",
       "region": "North America",
