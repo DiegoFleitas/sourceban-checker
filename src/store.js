@@ -2,7 +2,7 @@ import { createStore } from "vuex";
 import DomParser from "dom-parser";
 import serversData from "./servers.json";
 
-function performFetch({ url, xpath, selectorIndex }) {
+function performFetch({ url, xpath, selectorIndex, selectorText }) {
   return fetch(url)
     .then((response) => {
       if (!response.ok) {
@@ -24,7 +24,8 @@ function performFetch({ url, xpath, selectorIndex }) {
         .snapshotItem(selectorIndex);
       console.log(url, element?.outerText);
       let banStatus = "Not banned";
-      if (element?.outerText?.includes("Permanent")) {
+      const textToSearch = selectorText || "Permanent";
+      if (element?.outerText?.includes(textToSearch)) {
         banStatus = "Banned";
       }
       return banStatus;
@@ -80,6 +81,7 @@ export default createStore({
             url,
             xpath: server.selector,
             selectorIndex: server.selectorIndex,
+            selectorText: server?.selectorText,
           })
             .then((result) => {
               commit("updateSearch", {
@@ -103,6 +105,7 @@ export default createStore({
         url: testUrl,
         xpath: server.selector,
         selectorIndex: server.selectorIndex,
+        selectorText: server?.selectorText,
       })
         .then((banStatus) => {
           const result = banStatus === "Banned" ? "pass" : "fail";
