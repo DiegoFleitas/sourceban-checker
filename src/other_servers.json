@@ -1,0 +1,30 @@
+{
+  "servers": [
+    {
+      "url": "https://banlist.cbp-gaming.com/search.php",
+      "selector": "//tr[@class='list']",
+      "selectorIndex": 0,
+      "example": "https://banlist.cbp-gaming.com/search.php",
+      "method": "POST",
+      "body": "steamid=STEAM_0%3A1%3A708130832&submit=Buscar",
+      "type": "amxbans",
+      "domain": "cbp-gaming.com",
+      "country": "Venezuela",
+      "region": "South America",
+      "version": "Unknown"
+    },
+    {
+      "url": "https://amxbans.cs-palmas.com.ve/search.php",
+      "selector": "//tr[@class='list']",
+      "selectorIndex": 0,
+      "example": "https://amxbans.cs-palmas.com.ve/search.php",
+      "method": "POST",
+      "body": "steamid=STEAM_0%3A1%3A78905822&submit=Buscar",
+      "type": "amxbans",
+      "domain": "cbp-gaming.com",
+      "country": "Venezuela",
+      "region": "South America",
+      "version": "Unknown"
+    }
+  ]
+}
