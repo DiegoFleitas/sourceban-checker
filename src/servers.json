@@ -11,6 +11,16 @@
       "version": "1.5.3"
     },
     {
+      "url": "https://bans.scrap.tf/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://bans.scrap.tf/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:0:159176395",
+      "domain": "bans.scrap.tf",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.8.0"
+    },
+    {
       "url": "https://lazypurple.com/sourcebans/index.php?p=banlist&advType=steamid&advSearch=",
       "selector": "//table[contains(@class, 'listtable')]",
       "selectorIndex": 3,
@@ -164,8 +174,8 @@
       "url": "https://bans.lbgaming.co/index.php?p=banlist&advType=steamid&advSearch=",
       "selector": "//table[contains(@class, 'listtable')]",
       "selectorIndex": 3,
-      "example": "https://bans.lbgaming.co/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:772357191",
-      "domain": "lbgaming.co",
+      "example": "https://bans.lbgaming.co/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:0:65513675",
+      "domain": "bans.lbgaming.co",
       "country": "United States",
       "region": "North America",
       "version": "1.6.4"
@@ -184,7 +194,7 @@
       "url": "https://bans.cutiepie.tf/index.php?p=banlist&advType=steamid&advSearch=",
       "selector": "//table[contains(@class, 'listtable')]",
       "selectorIndex": 3,
-      "example": "https://bans.cutiepie.tf/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:617740418",
+      "example": "https://bans.cutiepie.tf/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:0:129079318",
       "domain": "cutiepie.tf",
       "country": "United States",
       "region": "North America",
@@ -202,10 +212,10 @@
     },
     {
       "url": "https://bans.darkpyrogaming.com/index.php?p=banlist&advType=steamid&advSearch=",
-      "selector": "//tr[@class='tbl_out']",
-      "selectorIndex": 0,
-      "example": "https://bans.darkpyrogaming.com/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:713772564",
-      "domain": "darkpyrogaming.com",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://bans.darkpyrogaming.com/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:0:764206769",
+      "domain": "bans.darkpyrogaming.com",
       "country": "United States",
       "region": "North America",
       "version": "1.7.0"
@@ -234,8 +244,8 @@
       "url": "https://bans.harpoongaming.com/index.php?p=banlist&advType=steamid&advSearch=",
       "selector": "//table[contains(@class, 'listtable')]",
       "selectorIndex": 3,
-      "example": "https://bans.harpoongaming.com/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:240340395",
-      "domain": "harpoongaming.com",
+      "example": "https://bans.harpoongaming.com/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:0:480122490",
+      "domain": "bans.harpoongaming.com",
       "country": "United States",
       "region": "North America",
       "version": "1.7.0"
@@ -257,7 +267,7 @@
       "selectorIndex": 0,
       "selectorText": "Навсегда",
       "example": "https://bans.progameszet.ru/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:0:617972145",
-      "domain": "progameszet.ru",
+      "domain": "bans.progameszet.ru",
       "country": "Russia",
       "region": "Europe",
       "version": "1.1.5.4"
@@ -294,7 +304,7 @@
     },
     {
       "url": "http://jbx.site.nfoservers.com/sourcebans/index.php?p=banlist&advType=steamid&advSearch=",
-      "selector": "//td[@class='listtable_1_permanent']",
+      "selector": "//table[contains(@class, 'table table-hover tbl-sm')]",
       "selectorIndex": 0,
       "example": "http://jbx.site.nfoservers.com/sourcebans/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:742376174",
       "domain": "jbx.site",
@@ -311,6 +321,207 @@
       "country": "United States",
       "region": "North America",
       "version": "1.6.3"
+    },
+    {
+      "url": "https://bans.jumpacademy.tf/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://bans.jumpacademy.tf/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:182870257",
+      "domain": "bans.jumpacademy.tf",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.8.0"
+    },
+    {
+      "url": "https://bans.wonderland.tf/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://bans.wonderland.tf/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:0:130514162",
+      "domain": "bans.wonderland.tf",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.8.0"
+    },
+    {
+      "url": "https://bans.panda-community.com/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//ul[@class='ban_list_detal']",
+      "selectorIndex": 0,
+      "example": "https://bans.panda-community.com/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:0:162214625",
+      "domain": "bans.panda-community.com",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.8.0"
+    },
+    {
+      "url": "https://bans.blackwonder.tf/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://bans.blackwonder.tf/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:0:770945883",
+      "domain": "bans.blackwonder.tf",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.8.0"
+    },
+    {
+      "url": "http://disc-ff.site.nfoservers.com/sourcebanstf2/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "http://disc-ff.site.nfoservers.com/sourcebanstf2/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:713749043",
+      "domain": "disc-ff.site.nfoservers.com",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.8.0"
+    },
+    {
+      "url": "https://sb.ugc-gaming.net/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//ul[@class='ban_list_detal']",
+      "selectorIndex": 0,
+      "example": "https://sb.ugc-gaming.net/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:562001058",
+      "domain": "sb.ugc-gaming.net",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.8.0"
+    },
+    {
+      "url": "https://firepoweredgaming.com/sourcebanspp/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "selectorText": "",
+      "example": "https://firepoweredgaming.com/sourcebanspp/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:170105182",
+      "domain": "firepoweredgaming.com",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.6.4"
+    },
+    {
+      "url": "https://bans.pubs.tf/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//tr[@class='tbl_out']",
+      "selectorIndex": 0,
+      "example": "https://bans.pubs.tf/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:764868685",
+      "domain": "bans.pubs.tf",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.6.4"
+    },
+    {
+      "url": "https://bans.otaku.tf/bans?dosearch=1&steamid=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://bans.otaku.tf/bans?dosearch=1&steamid=STEAM_0:0:624959947",
+      "domain": "bans.otaku.tf",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.0.0"
+    },
+    {
+      "url": "https://bans.titan.tf/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://bans.titan.tf/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:713749043",
+      "domain": "bans.titan.tf",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.7.0"
+    },
+    {
+      "url": "https://sb.tawerna.tf/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://sb.tawerna.tf/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:774180672",
+      "domain": "sb.tawerna.tf",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.6.4"
+    },
+    {
+      "url": "https://bans.powerfps.com/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://bans.powerfps.com/index.php?p=banlist&advType=steamid&advSearch=STEAM_1:1:774003547",
+      "domain": "bans.powerfps.com",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.6.4"
+    },
+    {
+      "url": "https://bans.cswarzone.com/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://bans.cswarzone.com/index.php?p=banlist&advType=steamid&advSearch=STEAM_1:1:774185069",
+      "domain": "bans.cswarzone.com",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.8.0"
+    },
+    {
+      "url": "https://bans.tactical.pt/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'table table-hover tbl-sm')]",
+      "selectorIndex": 0,
+      "example": "https://bans.tactical.pt/index.php?p=banlist&advType=steamid&advSearch=STEAM_1:0:527267919",
+      "domain": "bans.tactical.pt",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.8.0"
+    },
+    {
+      "url": "https://bans.defusero.org/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//ul[@class='ban_list_detal']",
+      "selectorIndex": 0,
+      "example": "https://bans.defusero.org/index.php?p=banlist&advType=steamid&advSearch=STEAM_1:0:774954292",
+      "domain": "bans.defusero.org",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.8.0"
+    },
+    {
+      "url": "https://bans.edan.gg/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//tr[@class='tbl_out']",
+      "selectorIndex": 0,
+      "example": "https://bans.edan.gg/index.php?p=banlist&advType=steamid&advSearch=STEAM_1:0:774697703",
+      "domain": "bans.edan.gg",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.6.3"
+    },
+    {
+      "url": "https://bans.overloadedmind.pt/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'table table-hover tbl-sm')]",
+      "selectorIndex": 0,
+      "example": "https://bans.overloadedmind.pt/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:0:527659338",
+      "domain": "bans.overloadedmind.pt",
+      "country": "Portugal",
+      "region": "Europe",
+      "version": "1.8.0"
+    },
+    {
+      "url": "https://bans.amsgaming.in/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'table table-hover tbl-sm')]",
+      "selectorIndex": 0,
+      "example": "https://bans.amsgaming.in/index.php?p=banlist&advType=steamid&advSearch=STEAM_1:1:119737670",
+      "domain": "bans.amsgaming.in",
+      "country": "India",
+      "region": "Asia",
+      "version": "1.6.4"
+    },
+    {
+      "url": "https://bans.zozo.gg/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "example": "https://bans.zozo.gg/index.php?p=banlist&advType=steamid&advSearch=STEAM_1:0:1677299400",
+      "domain": "bans.zozo.gg",
+      "country": "Russia",
+      "region": "Europe",
+      "version": "1.4.10"
+    },
+    {
+      "url": "https://bans.baitedcommunity.com/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'table table-hover tbl-sm')]",
+      "selectorIndex": 0,
+      "example": "https://bans.baitedcommunity.com/index.php?p=banlist&advType=steamid&advSearch=STEAM_1:0:2307137",
+      "domain": "bans.baitedcommunity.com",
+      "country": "France",
+      "region": "Europe",
+      "version": "1.8.0"
     }
   ]
 }

@@ -22,10 +22,11 @@ function performFetch({ url, xpath, selectorIndex, selectorText }) {
           null
         )
         .snapshotItem(selectorIndex);
-      console.log(url, element?.outerText);
+      // outerText depends on visibilty
+      console.log(url, element?.textContent);
       let banStatus = "Not banned";
       const textToSearch = selectorText || "Permanent";
-      if (element?.outerText?.includes(textToSearch)) {
+      if (element?.textContent?.includes(textToSearch)) {
         banStatus = "Banned";
       }
       return banStatus;
