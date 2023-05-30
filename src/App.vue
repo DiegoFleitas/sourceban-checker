@@ -47,8 +47,9 @@ export default {
     ...mapState(['searches']),
   },
   methods: {
-    performSearch(steamID) {
-      this.$store.dispatch('performSearch', steamID);
+    performSearch(steamId) {
+      this.$store.commit('setSteamID', steamId)
+      this.$store.dispatch('performSearch', steamId);
     },
   },
   setup() {
@@ -58,6 +59,7 @@ export default {
     watch(() => route.query, (newQuery, oldQuery) => {
       const steamId = newQuery?.steamid;
       if (steamId) {
+        store.commit('setSteamID', steamId)
         store.dispatch('performSearch', steamId);
       }
     });
