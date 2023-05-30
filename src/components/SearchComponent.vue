@@ -6,7 +6,7 @@
       v-model="steamID"
       @keyup.enter="search"
       type="text"
-      placeholder="Enter SteamID"
+      placeholder="Enter SteamID ex:STEAM_0:1:64716503"
     />
     <div class="button-container">
       <button @click="search">Search</button>
@@ -19,7 +19,7 @@ export default {
   name: 'SearchComponent',
   data() {
     return {
-      steamID: 'STEAM_0:1:64716503',
+      steamID: '',
     };
   },
   props: {
@@ -31,8 +31,14 @@ export default {
         alert('Please enter a SteamID');
         return;
       }
+      this.$store.commit('clearSearches');
       this.$emit('search', this.steamID);
     },
+  },
+  created() {
+    if (this.$route.query.steamid) {
+      this.steamID = this.$route.query.steamid;
+    }
   },
 };
 </script>

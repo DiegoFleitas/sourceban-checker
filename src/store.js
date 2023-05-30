@@ -39,8 +39,12 @@ export default createStore({
   state: {
     searches: [],
     testResults: [],
+    steamID: "",
   },
   mutations: {
+    setSteamID(state, steamID) {
+      state.steamID = steamID;
+    },
     addSearch(state, search) {
       state.searches.push(search);
     },
@@ -50,6 +54,9 @@ export default createStore({
         ...data,
       };
     },
+    clearSearches(state) {
+      state.searches = [];
+    },
     updateTestResult(state, { index, result }) {
       state.testResults[index] = result;
     },
@@ -57,35 +64,36 @@ export default createStore({
   actions: {
     performSearch({ commit }, steamID) {
       const servers = serversData.servers;
-      // FIXME: skial uses other format
-      servers.shift();
       const proxy = "https://stark-woodland-93683.fly.dev/";
-      servers.forEach((server, index) => {
-        const url = proxy + server.url + steamID;
-        const search = {
-          url,
-          status: "loading",
-          result: null,
-        };
-        commit("addSearch", search);
-        performFetch({
-          url,
-          xpath: server.selector,
-          selectorIndex: server.selectorIndex,
-        })
-          .then((result) => {
-            commit("updateSearch", {
-              index,
-              data: { status: "complete", result },
-            });
+      // FIXME: skip skial for now (different format)
+      servers
+        .filter((server) => server.domain !== "skial.com")
+        .forEach((server, index) => {
+          const url = proxy + server.url + steamID;
+          const search = {
+            url,
+            status: "loading",
+            result: null,
+          };
+          commit("addSearch", search);
+          performFetch({
+            url,
+            xpath: server.selector,
+            selectorIndex: server.selectorIndex,
           })
-          .catch((error) => {
-            commit("updateSearch", {
-              index,
-              data: { status: "error", result: error.toString() },
+            .then((result) => {
+              commit("updateSearch", {
+                index,
+                data: { status: "complete", result },
+              });
+            })
+            .catch((error) => {
+              commit("updateSearch", {
+                index,
+                data: { status: "error", result: error.toString() },
+              });
             });
-          });
-      });
+        });
     },
     testSearch({ commit }, index) {
       const server = serversData.servers[index];
