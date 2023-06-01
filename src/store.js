@@ -1,6 +1,7 @@
 import { createStore } from "vuex";
 import DomParser from "dom-parser";
 import serversData from "./servers.json";
+import localForage from "localforage";
 
 function performFetch({ url, xpath, selectorIndex, selectorText }) {
   return fetch(url)
@@ -64,13 +65,13 @@ export default createStore({
     },
   },
   actions: {
-    performSearch({ commit }, steamID) {
+    async performSearch({ commit, state }, steamID) {
       const servers = serversData.servers;
       const proxy = "https://stark-woodland-93683.fly.dev/";
       // FIXME: skip skial for now (different format)
       servers
         .filter((server) => server.domain !== "skial.com")
-        .forEach((server, index) => {
+        .forEach(async (server, index) => {
           const url = proxy + server.url + steamID;
           const search = {
             url,
@@ -78,24 +79,40 @@ export default createStore({
             result: null,
           };
           commit("addSearch", search);
-          performFetch({
-            url,
-            xpath: server.selector,
-            selectorIndex: server.selectorIndex,
-            selectorText: server?.selectorText,
-          })
-            .then((result) => {
+
+          const cacheKey = `${steamID}_${server.domain}`;
+          localForage.getItem(cacheKey).then((cachedData) => {
+            // If there is cached data and it is less than a week old, use it.
+            const now = Date.now();
+            const oneWeek = 7 * 24 * 60 * 60 * 1000; // in milliseconds
+            if (cachedData && now - cachedData.timestamp < oneWeek) {
               commit("updateSearch", {
                 index,
-                data: { status: "complete", result },
+                data: { status: "complete", result: cachedData.result },
               });
+              return;
+            }
+
+            performFetch({
+              url,
+              xpath: server.selector,
+              selectorIndex: server.selectorIndex,
+              selectorText: server?.selectorText,
             })
-            .catch((error) => {
-              commit("updateSearch", {
-                index,
-                data: { status: "error", result: error.toString() },
+              .then(async (result) => {
+                await localForage.setItem(cacheKey, { result, timestamp: now });
+                commit("updateSearch", {
+                  index,
+                  data: { status: "complete", result },
+                });
+              })
+              .catch((error) => {
+                commit("updateSearch", {
+                  index,
+                  data: { status: "error", result: error.toString() },
+                });
               });
-            });
+          });
         });
     },
     testSearch({ commit }, index) {
