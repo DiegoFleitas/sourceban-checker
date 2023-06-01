@@ -44,7 +44,7 @@ export default {
   methods: {
     removeProxyFromUrl(url) {
       const proxyUrl = 'https://stark-woodland-93683.fly.dev/';
-      return url.replace(proxyUrl, '');
+      return url?.replace(proxyUrl, '') || '';
     },
     testSearch() {
       this.$store.dispatch('testSearch', this.search.domain);
