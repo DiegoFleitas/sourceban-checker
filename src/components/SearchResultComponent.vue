@@ -47,12 +47,12 @@ export default {
       return url.replace(proxyUrl, '');
     },
     testSearch() {
-      this.$store.dispatch('testSearch', this.index);
+      this.$store.dispatch('testSearch', this.search.domain);
     },
   },
   computed: {
     testResult() {
-      return this.$store.state.testResults[this.index];
+      return this.$store.state.testResults[this.search.domain];
     }
   },
 };
