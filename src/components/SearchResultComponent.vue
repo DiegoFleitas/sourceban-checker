@@ -1,5 +1,6 @@
 <template>
-  <tr class="search-result">
+  <!-- hide skial.com results -->
+  <tr class="search-result" v-if="search.domain !== 'skial.com'">
     <td>
       <a :href="removeProxyFromUrl(search.url)" target="_blank">{{
         removeProxyFromUrl(search.url)
@@ -15,6 +16,9 @@
       >
         {{ search.result }}
       </a>
+      <a v-else-if="search.result === 'fail'" :href="getNewIssueUrl()" target="_blank">
+        {{ search.result }}
+      </a>
       <span v-else>{{ search.result }}</span>
     </td>
     <td>
@@ -25,10 +29,12 @@
         <span style="color: green;">✔</span> Test passed
       </div>
       <div v-else-if="testResult === 'fail'">
-        <span style="color: red;">❌</span> Test failed
+        <span style="color: red;">❌</span>
+        <a :href="getNewIssueUrl()"  target="_blank">Test failed</a>
       </div>
       <div v-else-if="testResult === 'error'">
-        <span style="color: red;">❌</span> Test error
+        <span style="color: red;">❌</span>
+        <a :href="getNewIssueUrl()"  target="_blank">Test error</a>
       </div>
     </td>
   </tr>
@@ -44,10 +50,16 @@ export default {
   methods: {
     removeProxyFromUrl(url) {
       const proxyUrl = 'https://stark-woodland-93683.fly.dev/';
-      return url.replace(proxyUrl, '');
+      return url?.replace(proxyUrl, '') || '';
     },
     testSearch() {
       this.$store.dispatch('testSearch', this.search.domain);
+    },
+    getNewIssueUrl() {
+      const repoUrl = 'https://github.com/DiegoFleitas/sourceban-checker';
+      const title = `Scraping error - ${this.search.domain}`;
+      const body = `Please fix :)`;
+      return `${repoUrl}/issues/new?title=${title}&body=${body}&labels=bug&assignee=DiegoFleitas`;
     },
   },
   computed: {
