@@ -3,7 +3,7 @@ import DomParser from "dom-parser";
 import serversData from "./servers.json";
 import localForage from "localforage";
 
-function performFetch({ url, xpath, selectorIndex, selectorText }) {
+const performFetch = ({ url, xpath, selectorIndex, selectorText }) => {
   return fetch(url)
     .then((response) => {
       if (!response.ok) {
@@ -36,32 +36,50 @@ function performFetch({ url, xpath, selectorIndex, selectorText }) {
       console.log(error);
       return "fail";
     });
-}
+};
 
 export default createStore({
   state: {
-    searches: [],
+    searches: serversData.servers.map((server) => ({
+      domain: server.domain,
+      url: server.url,
+      status: null,
+      result: null,
+    })),
     testResults: {},
     steamID: "",
+    serversChecked: 0,
+    // FIXME: skip skial for now (different format)
+    totalServers: serversData.servers.length - 1,
   },
   mutations: {
     setSteamID(state, steamID) {
       state.steamID = steamID;
     },
-    addSearch(state, search) {
-      state.searches.push(search);
-    },
-    updateSearch(state, { index, data }) {
-      state.searches[index] = {
-        ...state.searches[index],
-        ...data,
-      };
+    updateSearch(state, { domain, data }) {
+      const searchIndex = state.searches.findIndex(
+        (search) => search.domain === domain
+      );
+      if (searchIndex !== -1) {
+        state.searches[searchIndex] = {
+          ...state.searches[searchIndex],
+          ...data,
+        };
+      }
     },
     clearSearches(state) {
-      state.searches = [];
+      state.searches = serversData.servers.map((server) => ({
+        domain: server.domain,
+        url: server.url,
+        status: null,
+        result: null,
+      }));
     },
     updateTestResult(state, { domain, result }) {
       state.testResults[domain] = result;
+    },
+    incrementServersChecked(state) {
+      state.serversChecked++;
     },
   },
   actions: {
@@ -71,56 +89,53 @@ export default createStore({
       // FIXME: skip skial for now (different format)
       servers
         .filter((server) => server.domain !== "skial.com")
-        .forEach(async (server, index) => {
+        .forEach(async (server) => {
+          const domain = server.domain;
           const url = proxy + server.url + steamID;
-          const search = {
-            url,
-            status: "loading",
-            result: null,
-          };
-          commit("addSearch", search);
 
-          const cacheKey = `${steamID}_${server.domain}`;
-          localForage.getItem(cacheKey).then((cachedData) => {
-            // If there is cached data and it is less than a week old, use it.
-            const now = Date.now();
-            const oneWeek = 7 * 24 * 60 * 60 * 1000; // in milliseconds
-            if (cachedData && now - cachedData.timestamp < oneWeek) {
-              commit("updateSearch", {
-                index,
-                data: {
-                  domain: server.domain,
-                  status: "complete",
-                  result: cachedData.result,
-                },
-              });
-              return;
-            }
+          const cacheKey = `${steamID}_${domain}`;
+          const cachedData = await localForage.getItem(cacheKey);
 
-            performFetch({
+          if (cachedData && !isCacheExpired(cachedData.timestamp)) {
+            commit("updateSearch", {
+              domain,
+              data: {
+                url,
+                status: "complete",
+                result: cachedData.result,
+              },
+            });
+            commit("incrementServersChecked");
+            return;
+          }
+
+          commit("updateSearch", {
+            domain,
+            data: { url, status: "loading", result: null },
+          });
+          commit("incrementServersChecked");
+
+          try {
+            const result = await performFetch({
               url,
               xpath: server.selector,
               selectorIndex: server.selectorIndex,
               selectorText: server?.selectorText,
-            })
-              .then(async (result) => {
-                await localForage.setItem(cacheKey, { result, timestamp: now });
-                commit("updateSearch", {
-                  index,
-                  data: { domain: server.domain, status: "complete", result },
-                });
-              })
-              .catch((error) => {
-                commit("updateSearch", {
-                  index,
-                  data: {
-                    domain: server.domain,
-                    status: "error",
-                    result: error.toString(),
-                  },
-                });
-              });
-          });
+            });
+            await localForage.setItem(cacheKey, {
+              result,
+              timestamp: Date.now(),
+            });
+            commit("updateSearch", {
+              domain,
+              data: { status: "complete", result },
+            });
+          } catch (error) {
+            commit("updateSearch", {
+              domain,
+              data: { status: "error", result: error.toString() },
+            });
+          }
         });
     },
     testSearch({ commit }, domain) {
@@ -151,5 +166,13 @@ export default createStore({
         return statuses.indexOf(a.result) - statuses.indexOf(b.result);
       });
     },
+    progressCount: (state) =>
+      `[${state.serversChecked} / ${state.totalServers} servers checked]`,
   },
 });
+
+const isCacheExpired = (timestamp) => {
+  const oneWeek = 7 * 24 * 60 * 60 * 1000; // in milliseconds
+  const now = Date.now();
+  return now - timestamp >= oneWeek;
+};

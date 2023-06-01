@@ -5,6 +5,7 @@
       @search="performSearch"
       msg="Search SourceBans++ banlists"
     />
+    <p>{{ progressCount }}</p>
     <div class="table-container">
       <table>
         <thead>
@@ -51,6 +52,9 @@ export default {
     ...mapState(['searches']),
     sortedSearches() {
       return this.$store.getters.sortedSearches;
+    },
+    progressCount() {
+      return this.$store.getters.progressCount;
     },
   },
   methods: {

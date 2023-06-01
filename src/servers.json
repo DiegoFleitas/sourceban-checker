@@ -435,16 +435,6 @@
       "version": "1.6.4"
     },
     {
-      "url": "https://bans.powerfps.com/index.php?p=banlist&advType=steamid&advSearch=",
-      "selector": "//table[contains(@class, 'listtable')]",
-      "selectorIndex": 3,
-      "example": "https://bans.powerfps.com/index.php?p=banlist&advType=steamid&advSearch=STEAM_1:1:774003547",
-      "domain": "bans.powerfps.com",
-      "country": "United States",
-      "region": "North America",
-      "version": "1.6.4"
-    },
-    {
       "url": "https://bans.cswarzone.com/index.php?p=banlist&advType=steamid&advSearch=",
       "selector": "//table[contains(@class, 'listtable')]",
       "selectorIndex": 3,
