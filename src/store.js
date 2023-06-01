@@ -41,7 +41,7 @@ function performFetch({ url, xpath, selectorIndex, selectorText }) {
 export default createStore({
   state: {
     searches: [],
-    testResults: [],
+    testResults: {},
     steamID: "",
   },
   mutations: {
@@ -60,8 +60,8 @@ export default createStore({
     clearSearches(state) {
       state.searches = [];
     },
-    updateTestResult(state, { index, result }) {
-      state.testResults[index] = result;
+    updateTestResult(state, { domain, result }) {
+      state.testResults[domain] = result;
     },
   },
   actions: {
@@ -88,7 +88,11 @@ export default createStore({
             if (cachedData && now - cachedData.timestamp < oneWeek) {
               commit("updateSearch", {
                 index,
-                data: { status: "complete", result: cachedData.result },
+                data: {
+                  domain: server.domain,
+                  status: "complete",
+                  result: cachedData.result,
+                },
               });
               return;
             }
@@ -103,20 +107,24 @@ export default createStore({
                 await localForage.setItem(cacheKey, { result, timestamp: now });
                 commit("updateSearch", {
                   index,
-                  data: { status: "complete", result },
+                  data: { domain: server.domain, status: "complete", result },
                 });
               })
               .catch((error) => {
                 commit("updateSearch", {
                   index,
-                  data: { status: "error", result: error.toString() },
+                  data: {
+                    domain: server.domain,
+                    status: "error",
+                    result: error.toString(),
+                  },
                 });
               });
           });
         });
     },
-    testSearch({ commit }, index) {
-      const server = serversData.servers[index];
+    testSearch({ commit }, domain) {
+      const server = serversData.servers.find((sv) => sv.domain === domain);
       const proxy = "https://stark-woodland-93683.fly.dev/";
       const testUrl = proxy + server.example;
       performFetch({
@@ -127,11 +135,21 @@ export default createStore({
       })
         .then((banStatus) => {
           const result = banStatus === "Banned" ? "pass" : "fail";
-          commit("updateTestResult", { index, result });
+          commit("updateTestResult", { domain, result });
         })
         .catch(() => {
-          commit("updateTestResult", { index, result: "fail" });
+          commit("updateTestResult", { domain, result: "fail" });
         });
+    },
+  },
+  getters: {
+    sortedSearches: (state) => {
+      const searches = [...state.searches];
+
+      return searches.sort((a, b) => {
+        const statuses = ["Banned", "Not banned", "loading", "error"];
+        return statuses.indexOf(a.result) - statuses.indexOf(b.result);
+      });
     },
   },
 });
