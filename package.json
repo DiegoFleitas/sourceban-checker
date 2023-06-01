@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "dom-parser": "^0.1.6",
+    "localforage": "^1.10.0",
     "vue": "^3.2.26",
     "vue-router": "^4.0.13",
     "vuex": "^4.1.0"
