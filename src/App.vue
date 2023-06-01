@@ -18,7 +18,7 @@
         </thead>
         <tbody>
           <SearchResultComponent
-            v-for="(search, index) in searches"
+            v-for="(search, index) in sortedSearches"
             :key="index"
             :search="search"
             :index="index"
@@ -45,6 +45,9 @@ export default {
   },
   computed: {
     ...mapState(['searches']),
+    sortedSearches() {
+      return this.$store.getters.sortedSearches;
+    },
   },
   methods: {
     performSearch(steamId) {
