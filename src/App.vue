@@ -37,6 +37,10 @@ import { watch } from 'vue';
 import SearchComponent from './components/SearchComponent.vue';
 import SearchResultComponent from './components/SearchResultComponent.vue';
 
+function cleanSteamId(steamId) {
+  return steamId.replace(/\s/g, '');
+}
+
 export default {
   name: 'App',
   components: {
@@ -51,9 +55,10 @@ export default {
   },
   methods: {
     performSearch(steamId) {
-      this.$store.commit('setSteamID', steamId)
+      this.$store.commit('setSteamID', cleanSteamId(steamId))
       this.$store.dispatch('performSearch', steamId);
     },
+    
   },
   setup() {
     const route = useRoute();
@@ -62,7 +67,7 @@ export default {
     watch(() => route.query, (newQuery, oldQuery) => {
       const steamId = newQuery?.steamid;
       if (steamId) {
-        store.commit('setSteamID', steamId)
+        store.commit('setSteamID', cleanSteamId(steamId))
         store.dispatch('performSearch', steamId);
       }
     });
