@@ -3,7 +3,7 @@
     <h1>{{ msg }}</h1>
     <p>Enter a SteamID to check:</p>
     <input
-      v-model="steamID"
+      v-model="steamId"
       @keyup.enter="search"
       type="text"
       placeholder="Enter SteamID ex:STEAM_0:1:64716503"
@@ -16,10 +16,10 @@
 
 <script>
 export default {
-  name: 'SearchComponent',
+  name: "SearchComponent",
   data() {
     return {
-      steamID: '',
+      steamId: "",
     };
   },
   props: {
@@ -27,17 +27,17 @@ export default {
   },
   methods: {
     search() {
-      if (!this.steamID) {
-        alert('Please enter a SteamID');
+      if (!this.steamId) {
+        alert("Please enter a SteamID");
         return;
       }
-      this.$store.commit('clearSearches');
-      this.$emit('search', this.steamID);
+      this.$store.commit("clearSearches");
+      this.$emit("search", this.steamId);
     },
   },
   created() {
     if (this.$route.query.steamid) {
-      this.steamID = this.$route.query.steamid;
+      this.steamId = this.$route.query.steamid;
     }
   },
 };

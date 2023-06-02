@@ -1,5 +1,6 @@
 import { createStore } from "vuex";
 import DomParser from "dom-parser";
+import SteamId from "steamid";
 import serversData from "./servers.json";
 import localForage from "localforage";
 
@@ -47,14 +48,13 @@ export default createStore({
       result: null,
     })),
     testResults: {},
-    steamID: "",
+    steamId: "",
     serversChecked: 0,
-    // FIXME: skip skial for now (different format)
-    totalServers: serversData.servers.length - 1,
+    totalServers: serversData.servers.length,
   },
   mutations: {
-    setSteamID(state, steamID) {
-      state.steamID = steamID;
+    setSteamID(state, steamId) {
+      state.steamId = steamId;
     },
     updateSearch(state, { domain, data }) {
       const searchIndex = state.searches.findIndex(
@@ -83,60 +83,63 @@ export default createStore({
     },
   },
   actions: {
-    async performSearch({ commit, state }, steamID) {
+    async performSearch({ commit, state }, steamId) {
       const servers = serversData.servers;
       const proxy = "https://stark-woodland-93683.fly.dev/";
-      // FIXME: skip skial for now (different format)
-      servers
-        .filter((server) => server.domain !== "skial.com")
-        .forEach(async (server) => {
-          const domain = server.domain;
-          const url = proxy + server.url + steamID;
+      let player = new SteamId(steamId);
+      servers.forEach(async (server) => {
+        const domain = server.domain;
+        if (domain === "skial.com") {
+          steamId = player.getSteam3RenderedID();
+        } else {
+          steamId = player.getSteam2RenderedID();
+        }
+        const url = `${proxy}${server.url}${steamId}`;
 
-          const cacheKey = `${steamID}_${domain}`;
-          const cachedData = await localForage.getItem(cacheKey);
+        const cacheKey = `${steamId}_${domain}`;
+        const cachedData = await localForage.getItem(cacheKey);
 
-          if (cachedData && !isCacheExpired(cachedData.timestamp)) {
-            commit("updateSearch", {
-              domain,
-              data: {
-                url,
-                status: "complete",
-                result: cachedData.result,
-              },
-            });
-            commit("incrementServersChecked");
-            return;
-          }
-
+        if (cachedData && !isCacheExpired(cachedData.timestamp)) {
           commit("updateSearch", {
             domain,
-            data: { url, status: "loading", result: null },
+            data: {
+              url,
+              status: "complete",
+              result: cachedData.result,
+            },
           });
           commit("incrementServersChecked");
+          return;
+        }
 
-          try {
-            const result = await performFetch({
-              url,
-              xpath: server.selector,
-              selectorIndex: server.selectorIndex,
-              selectorText: server?.selectorText,
-            });
-            await localForage.setItem(cacheKey, {
-              result,
-              timestamp: Date.now(),
-            });
-            commit("updateSearch", {
-              domain,
-              data: { status: "complete", result },
-            });
-          } catch (error) {
-            commit("updateSearch", {
-              domain,
-              data: { status: "error", result: error.toString() },
-            });
-          }
+        commit("updateSearch", {
+          domain,
+          data: { url, status: "loading", result: null },
         });
+        commit("incrementServersChecked");
+
+        try {
+          const result = await performFetch({
+            url,
+            xpath: server.selector,
+            selectorIndex: server.selectorIndex,
+            selectorText: server?.selectorText,
+          });
+          await localForage.setItem(cacheKey, {
+            result,
+            timestamp: Date.now(),
+          });
+          commit("updateSearch", {
+            domain,
+            data: { status: "complete", result },
+          });
+        } catch (error) {
+          commit("updateSearch", {
+            domain,
+            data: { status: "error", result: error.toString() },
+          });
+        }
+      });
     },
     testSearch({ commit }, domain) {
       const server = serversData.servers.find((sv) => sv.domain === domain);
@@ -158,6 +161,8 @@ export default createStore({
     },
   },
   getters: {
+    getSteamID2: (state) => state.steamId.getSteam2RenderedID() || "",
+    getSteamID3: (state) => state.steamId.getSteam3RenderedID() || "",
     sortedSearches: (state) => {
       const searches = [...state.searches];
 
