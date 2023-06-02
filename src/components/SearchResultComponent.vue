@@ -1,6 +1,5 @@
 <template>
-  <!-- hide skial.com results -->
-  <tr class="search-result" v-if="search.domain !== 'skial.com'">
+  <tr class="search-result">
     <td>
       <a :href="removeProxyFromUrl(search.url)" target="_blank">{{
         removeProxyFromUrl(search.url)
