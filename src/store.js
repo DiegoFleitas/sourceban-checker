@@ -40,7 +40,7 @@ const performFetch = ({ url, xpath, selectorIndex, selectorText }) => {
 };
 
 // handles "STEAM_0" vs "STEAM_1" steam2 universe prefix
-// ex: tf2 banlist use "STEAM_0", whereas csgo, l4d2, etc use "STEAM_1"
+// ex: tf2 banlists use "STEAM_0", whereas csgo, l4d2, etc use "STEAM_1"
 // see @https://developer.valvesoftware.com/wiki/SteamID#Universes_Available_for_Steam_Accounts
 const getSteamId = (player, steamIdType) => {
   if (steamIdType === "steam3") {
