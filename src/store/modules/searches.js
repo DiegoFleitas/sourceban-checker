@@ -1,5 +1,5 @@
-import { performFetch, getSteamId, isCacheExpired } from "./utils.js";
-import serversData from "./servers.json";
+import { performFetch, getSteamId, isCacheExpired } from "../../utils.js";
+import serversData from "../../servers.json";
 import localForage from "localforage";
 import SteamId from "steamid";
 

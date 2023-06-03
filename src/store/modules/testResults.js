@@ -1,5 +1,5 @@
-import { performFetch } from "./utils.js";
-import serversData from "./servers.json";
+import { performFetch } from "../../utils.js";
+import serversData from "../../servers.json";
 
 export default {
   state: {
