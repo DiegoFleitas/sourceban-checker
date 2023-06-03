@@ -63,7 +63,9 @@ export default {
   },
   computed: {
     testResult() {
-      return this.$store.state.testResults[this.search.domain];
+      const domain = this.search.domain
+      const tests = this.$store.getters.getTestResult;
+      return tests?.[domain];
     }
   },
 };
