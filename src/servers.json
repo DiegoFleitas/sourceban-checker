@@ -898,6 +898,17 @@
       "country": "United States",
       "region": "North America",
       "version": "1.8.0"
+    },
+    {
+      "url": "https://neonheights.xyz/bans/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "selectorText": "",
+      "example": "https://neonheights.xyz/bans/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:0:771329155",
+      "domain": "neonheights.xyz",
+      "country": "United States",
+      "region": "North America",
+      "version": "Unknown"
     }
   ]
 }
