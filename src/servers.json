@@ -478,17 +478,6 @@
       "version": "1.6.4"
     },
     {
-      "url": "https://bans.cswarzone.com/index.php?p=banlist&advType=steamid&advSearch=",
-      "selector": "//table[contains(@class, 'listtable')]",
-      "selectorIndex": 3,
-      "example": "https://bans.cswarzone.com/index.php?p=banlist&advType=steamid&advSearch=STEAM_1:1:774185069",
-      "domain": "bans.cswarzone.com",
-      "steamIdType": "steam2_new",
-      "country": "United States",
-      "region": "North America",
-      "version": "1.8.0"
-    },
-    {
       "url": "https://bans.tactical.pt/index.php?p=banlist&advType=steamid&advSearch=",
       "selector": "//table[contains(@class, 'table table-hover tbl-sm')]",
       "selectorIndex": 0,
