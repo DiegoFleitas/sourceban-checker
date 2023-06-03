@@ -39,6 +39,20 @@ const performFetch = ({ url, xpath, selectorIndex, selectorText }) => {
     });
 };
 
+// handles "STEAM_0" vs "STEAM_1" steam2 universe prefix
+// ex: tf2 banlists use "STEAM_0", whereas csgo, l4d2, etc use "STEAM_1"
+// see @https://developer.valvesoftware.com/wiki/SteamID#Universes_Available_for_Steam_Accounts
+const getSteamId = (player, steamIdType) => {
+  if (steamIdType === "steam3") {
+    return player.getSteam3RenderedID();
+  } else if (steamIdType === "steam2_new") {
+    return player.getSteam2RenderedID(true);
+  } else {
+    // Default to steam2_old
+    return player.getSteam2RenderedID();
+  }
+};
+
 export default createStore({
   state: {
     searches: serversData.servers.map((server) => ({
@@ -93,11 +107,7 @@ export default createStore({
       let player = new SteamId(steamId);
       servers.forEach(async (server) => {
         const domain = server.domain;
-        if (domain === "skial.com") {
-          steamId = player.getSteam3RenderedID();
-        } else {
-          steamId = player.getSteam2RenderedID();
-        }
+        const steamId = getSteamId(player, server.steamIdType);
         const url = `${proxy}${server.url}${steamId}`;
 
         const cacheKey = `${steamId}_${domain}`;
