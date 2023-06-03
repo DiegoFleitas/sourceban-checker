@@ -85,8 +85,13 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #393838;
   margin-top: 60px;
+  background-color: white;
+}
+
+h1 {
+  color: #2c3e50;
 }
 
 .table-container {
@@ -99,12 +104,35 @@ export default {
 table {
   width: 100%;
   table-layout: fixed;
+  background-color: #eaeaea;
 }
 
 th, td {
   width: 20%;
   text-align: center; 
   padding: 5px; 
-  border: 1px solid black;
+  background-color: #393838;
+  color: white;
+}
+
+td {
+  background-color: white;
+  color: #393838;
+}
+
+td span {
+  color: #393838
+}
+
+.danger {
+  color: #b80202;
+}
+
+.suceess {
+  color: green;
+}
+
+a {
+  color: #2f4075;
 }
 </style>

@@ -28,7 +28,6 @@ export default {
   methods: {
     search() {
       if (!this.steamId) {
-        alert("Please enter a SteamID");
         return;
       }
       this.$store.commit("clearSearches");
@@ -55,6 +54,10 @@ input {
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;
+}
+
+a {
+  color: #2f4075;
 }
 
 button {

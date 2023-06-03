@@ -5,13 +5,13 @@
         removeProxyFromUrl(search.url)
       }}</a>
     </td>
-    <td>{{ search.status }}</td>
+    <td><span>{{ search.status }}</span></td>
     <td>
       <a
         v-if="search.result === 'Banned'"
         :href="removeProxyFromUrl(search.url)"
         target="_blank"
-        style="color: red;"
+        class="danger"
       >
         {{ search.result }}
       </a>
@@ -25,14 +25,14 @@
     </td>
     <td>
       <div v-if="testResult === 'pass'">
-        <span style="color: green;">✔</span> Test passed
+        <span class="suceess">✔</span> Test passed
       </div>
       <div v-else-if="testResult === 'fail'">
-        <span style="color: red;">❌</span>
+        <span class="danger">❌</span>
         <a :href="getNewIssueUrl()"  target="_blank">Test failed</a>
       </div>
       <div v-else-if="testResult === 'error'">
-        <span style="color: red;">❌</span>
+        <span class="danger">❌</span>
         <a :href="getNewIssueUrl()"  target="_blank">Test error</a>
       </div>
     </td>
