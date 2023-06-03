@@ -2,7 +2,7 @@
   <tr class="search-result">
     <td>
       <a :href="removeProxyFromUrl(search.url)" target="_blank">{{
-        removeProxyFromUrl(search.url)
+        search.domain
       }}</a>
     </td>
     <td><span>{{ search.status }}</span></td>
