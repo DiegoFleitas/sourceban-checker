@@ -44,7 +44,6 @@ export default {
     },
   },
   actions: {
-    // async performSearch({ commit }, steamId) {...},
     async performSearch({ commit, state }, steamId) {
       commit("clearServersChecked");
       const servers = serversData.servers;

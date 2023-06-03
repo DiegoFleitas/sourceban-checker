@@ -11,7 +11,6 @@ export default {
     },
   },
   actions: {
-    // testSearch({ commit }, domain) {...},
     testSearch({ commit }, domain) {
       const server = serversData.servers.find((sv) => sv.domain === domain);
       const proxy = "https://stark-woodland-93683.fly.dev/";
