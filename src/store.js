@@ -81,9 +81,13 @@ export default createStore({
     incrementServersChecked(state) {
       state.serversChecked++;
     },
+    clearServersChecked(state) {
+      state.serversChecked = 0;
+    },
   },
   actions: {
     async performSearch({ commit, state }, steamId) {
+      commit("clearServersChecked");
       const servers = serversData.servers;
       const proxy = "https://stark-woodland-93683.fly.dev/";
       let player = new SteamId(steamId);
@@ -161,8 +165,6 @@ export default createStore({
     },
   },
   getters: {
-    getSteamID2: (state) => state.steamId.getSteam2RenderedID() || "",
-    getSteamID3: (state) => state.steamId.getSteam3RenderedID() || "",
     sortedSearches: (state) => {
       const searches = [...state.searches];
 
@@ -172,7 +174,7 @@ export default createStore({
       });
     },
     progressCount: (state) =>
-      `[${state.serversChecked} / ${state.totalServers} servers checked]`,
+      `[${state.serversChecked} / ${state.totalServers} servers being checked]`,
   },
 });
 
