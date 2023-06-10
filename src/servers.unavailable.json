@@ -10,6 +10,18 @@
       "country": "United States",
       "region": "North America",
       "version": "1.8.0"
+    },
+    {
+      "url": "https://pwnzone.net/sourcebans/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "selectorText": "",
+      "example": "https://pwnzone.net/sourcebans/index.php?p=banlist&advType=steamid&advSearch=STEAM_1:0:568546312",
+      "domain": "pwnzone.net",
+      "steamIdType": "steam2_new",
+      "country": "Sweden",
+      "region": "Europe",
+      "version": "1.6.4"
     }
   ]
 }
