@@ -973,6 +973,17 @@
       "country": "United States",
       "region": "North America",
       "version": "Unknown"
+    },
+    {
+      "url": "http://pancakes.tf/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "selectorText": "",
+      "example": "http://pancakes.tf/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:564239424",
+      "domain": "pancakes.tf",
+      "country": "United States",
+      "region": "North America",
+      "version": "1.8.0"
     }
   ]
 }
