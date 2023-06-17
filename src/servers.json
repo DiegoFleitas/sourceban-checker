@@ -984,6 +984,17 @@
       "country": "United States",
       "region": "North America",
       "version": "1.8.0"
+    },
+    {
+      "url": "https://garryshosting.com/gameover/index.php?p=banlist&advType=steamid&advSearch=",
+      "selector": "//table[contains(@class, 'listtable')]",
+      "selectorIndex": 3,
+      "selectorText": "",
+      "example": "https://garryshosting.com/gameover/index.php?p=banlist&advType=steamid&advSearch=STEAM_0:1:571728504",
+      "domain": "garryshosting.com",
+      "country": "Argentina",
+      "region": "South America",
+      "version": "1.8.0"
     }
   ]
 }
