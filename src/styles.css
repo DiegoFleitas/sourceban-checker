@@ -26,8 +26,9 @@
   --space-lg: 2rem;
   --space-xl: 3rem;
 
-  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-    "Segoe UI", sans-serif;
+  --font-sans:
+    system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
+    sans-serif;
 }
 
 *,
@@ -235,7 +236,11 @@ td:first-child a {
   padding: 0.55rem 1.6rem;
   border-radius: 999px;
   border: 1px solid rgba(34, 197, 94, 0.4);
-  background: radial-gradient(circle at top left, var(--color-primary), var(--color-primary-strong));
+  background: radial-gradient(
+    circle at top left,
+    var(--color-primary),
+    var(--color-primary-strong)
+  );
   color: #022c22;
   font-size: 0.9rem;
   font-weight: 600;
@@ -317,4 +322,3 @@ td:first-child a {
     align-items: stretch;
   }
 }
-

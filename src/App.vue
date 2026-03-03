@@ -5,24 +5,28 @@
         <div>
           <h1 class="app-title">SourceBans++ banlist checker</h1>
           <p class="app-subtitle">
-            Quickly check whether a SteamID appears on any of the configured SourceBans++ banlists.
+            Quickly check whether a SteamID appears on any of the configured
+            SourceBans++ banlists.
           </p>
         </div>
         <div v-if="progressCount" class="status-pill">
-          <span class="status-pill__dot"></span>
+          <span class="status-pill__dot" />
           <span>{{ progressCount }}</span>
         </div>
       </header>
 
       <section class="card card--surface-soft">
         <SearchComponent
-          @search="performSearch"
           msg="Search SourceBans++ banlists"
+          @search="performSearch"
         />
       </section>
 
       <section class="card">
-        <div class="results-wrapper" v-if="sortedSearches && sortedSearches.length">
+        <div
+          v-if="sortedSearches && sortedSearches.length"
+          class="results-wrapper"
+        >
           <table>
             <thead>
               <tr>
@@ -73,22 +77,6 @@ export default defineComponent({
     SearchComponent,
     SearchResultComponent,
   },
-  computed: {
-    ...mapState(["searches"]),
-    sortedSearches(): SearchItem[] {
-      return (this as unknown as { $store: { getters: { sortedSearches: SearchItem[] } } }).$store.getters.sortedSearches;
-    },
-    progressCount(): string {
-      return (this as unknown as { $store: { getters: { progressCount: string } } }).$store.getters.progressCount;
-    },
-  },
-  methods: {
-    performSearch(steamId: string) {
-      const self = this as unknown as { $store: { commit: (a: string, b: string) => void; dispatch: (a: string, b: string) => void } };
-      self.$store.commit("setSteamID", cleanSteamId(steamId));
-      self.$store.dispatch("performSearch", steamId);
-    },
-  },
   setup() {
     const route = useRoute();
     const store = useStore();
@@ -103,6 +91,33 @@ export default defineComponent({
         }
       }
     );
+  },
+  computed: {
+    ...mapState(["searches"]),
+    sortedSearches(): SearchItem[] {
+      return (
+        this as unknown as {
+          $store: { getters: { sortedSearches: SearchItem[] } };
+        }
+      ).$store.getters.sortedSearches;
+    },
+    progressCount(): string {
+      return (
+        this as unknown as { $store: { getters: { progressCount: string } } }
+      ).$store.getters.progressCount;
+    },
+  },
+  methods: {
+    performSearch(steamId: string) {
+      const self = this as unknown as {
+        $store: {
+          commit: (a: string, b: string) => void;
+          dispatch: (a: string, b: string) => void;
+        };
+      };
+      self.$store.commit("setSteamID", cleanSteamId(steamId));
+      self.$store.dispatch("performSearch", steamId);
+    },
   },
 });
 </script>

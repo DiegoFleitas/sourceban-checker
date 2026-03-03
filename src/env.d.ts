@@ -16,8 +16,15 @@ declare module "steamid" {
 
 declare module "vue" {
   export function defineComponent(options: unknown): unknown;
-  export function watch(source: unknown, cb: unknown, options?: unknown): unknown;
-  export function createApp(rootComponent: unknown, rootProps?: unknown): unknown;
+  export function watch(
+    source: unknown,
+    cb: unknown,
+    options?: unknown
+  ): unknown;
+  export function createApp(
+    rootComponent: unknown,
+    rootProps?: unknown
+  ): unknown;
   export const ref: unknown;
   export const computed: unknown;
   export const onMounted: unknown;

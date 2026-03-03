@@ -17,12 +17,7 @@ export interface ServersData {
   servers: Server[];
 }
 
-export type BanResult =
-  | "Banned"
-  | "Not banned"
-  | "loading"
-  | "error"
-  | "fail";
+export type BanResult = "Banned" | "Not banned" | "loading" | "error" | "fail";
 
 export interface SearchItem {
   domain: string;

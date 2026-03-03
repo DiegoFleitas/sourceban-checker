@@ -105,7 +105,10 @@ describe("performFetch", () => {
   });
 
   it('returns "fail" when fetch rejects', async () => {
-    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("Network error")));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockRejectedValue(new Error("Network error"))
+    );
 
     const result = await performFetch({
       url: "https://example.com/bans",
