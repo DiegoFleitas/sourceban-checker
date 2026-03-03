@@ -1,32 +1,56 @@
 <template>
   <div id="app">
-    <!-- <img alt="Vue logo" src="https://vuejs.org/images/logo.png" /> -->
-    <SearchComponent
-      @search="performSearch"
-      msg="Search SourceBans++ banlists"
-    />
-    <p>{{ progressCount }}</p>
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>URL</th>
-            <th>Status</th>
-            <th>Result</th>
-            <th>Test</th>
-            <th>Test Result</th>
-          </tr>
-        </thead>
-        <tbody>
-          <SearchResultComponent
-            v-for="(search, index) in sortedSearches"
-            :key="index"
-            :search="search"
-            :index="index"
-          />
-        </tbody>
-      </table>
-    </div>
+    <main class="app-shell">
+      <header class="app-header">
+        <div>
+          <h1 class="app-title">SourceBans++ banlist checker</h1>
+          <p class="app-subtitle">
+            Quickly check whether a SteamID appears on any of the configured SourceBans++ banlists.
+          </p>
+        </div>
+        <div v-if="progressCount" class="status-pill">
+          <span class="status-pill__dot"></span>
+          <span>{{ progressCount }}</span>
+        </div>
+      </header>
+
+      <section class="card card--surface-soft">
+        <SearchComponent
+          @search="performSearch"
+          msg="Search SourceBans++ banlists"
+        />
+      </section>
+
+      <section class="card">
+        <div class="results-wrapper" v-if="sortedSearches && sortedSearches.length">
+          <table>
+            <thead>
+              <tr>
+                <th>URL</th>
+                <th>Status</th>
+                <th>Result</th>
+                <th>Test</th>
+                <th>Test Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              <SearchResultComponent
+                v-for="(search, index) in sortedSearches"
+                :key="index"
+                :search="search"
+                :index="index"
+              />
+            </tbody>
+          </table>
+        </div>
+        <div v-else class="empty-state">
+          <p class="empty-state__title">No results yet</p>
+          <p class="empty-state__subtitle">
+            Run a search with a SteamID to see bans from configured servers.
+          </p>
+        </div>
+      </section>
+    </main>
   </div>
 </template>
 
@@ -80,59 +104,19 @@ export default {
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #393838;
-  margin-top: 60px;
-  background-color: white;
+.empty-state {
+  padding: 1.5rem 1.25rem;
+  text-align: left;
 }
 
-h1 {
-  color: #2c3e50;
+.empty-state__title {
+  margin: 0 0 0.25rem;
+  font-weight: 500;
 }
 
-.table-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-
-table {
-  width: 100%;
-  table-layout: fixed;
-  background-color: #eaeaea;
-}
-
-th, td {
-  width: 20%;
-  text-align: center; 
-  padding: 5px; 
-  background-color: #393838;
-  color: white;
-}
-
-td {
-  background-color: white;
-  color: #393838;
-}
-
-td span {
-  color: #393838
-}
-
-.danger {
-  color: #b80202;
-}
-
-.suceess {
-  color: green;
-}
-
-a {
-  color: #2f4075;
+.empty-state__subtitle {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-soft);
 }
 </style>

@@ -1,15 +1,23 @@
 <template>
   <div class="search-component">
-    <h1>{{ msg }}</h1>
-    <p>Enter a SteamID to check:</p>
-    <input
-      v-model="steamId"
-      @keyup.enter="search"
-      type="text"
-      placeholder="Enter SteamID ex:STEAM_0:1:64716503"
-    />
-    <div class="button-container">
-      <button @click="search">Search</button>
+    <h2 class="search-title">{{ msg }}</h2>
+    <div class="search-layout">
+      <p class="search-label">Enter a SteamID to check:</p>
+      <div class="search-row">
+        <input
+          v-model="steamId"
+          @keyup.enter="search"
+          type="text"
+          class="search-input"
+          placeholder="Enter SteamID ex: STEAM_0:1:64716503"
+        />
+        <button class="primary-button" @click="search">
+          Search
+        </button>
+      </div>
+      <p class="search-helper">
+        Supports classic SteamID formats; whitespace is ignored.
+      </p>
     </div>
   </div>
 </template>
@@ -44,23 +52,19 @@ export default {
 
 <style scoped>
 .search-component {
-  text-align: center;
   margin: 0 auto;
   width: 100%;
-  max-width: 400px;
+  max-width: 520px;
 }
 
-input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
+.search-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
 }
 
-a {
-  color: #2f4075;
-}
-
-button {
-  padding: 10px;
+@media (max-width: 768px) {
+  .search-component {
+    max-width: 100%;
+  }
 }
 </style>

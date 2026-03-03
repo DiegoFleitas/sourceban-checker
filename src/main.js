@@ -2,6 +2,7 @@ import { createApp } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
 import App from "./App.vue";
 import store from "./store";
+import "./styles.css";
 
 // Define your routes. The routes you define here will depend on your application.
 const routes = [{ path: "/", component: App }];

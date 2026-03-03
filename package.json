@@ -2,9 +2,11 @@
   "name": "sb-vue",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@10.30.0",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -16,12 +18,7 @@
     "vuex": "^4.1.0"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.21.8",
-    "@vue/cli-plugin-babel": "^4.4.0",
-    "@vue/cli-plugin-eslint": "^4.4.0",
-    "@vue/cli-service": "^4.4.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^6.2.2",
-    "vue-template-compiler": "^2.6.11"
+    "@vitejs/plugin-vue": "^5.2.4",
+    "vite": "^5.4.21"
   }
 }
