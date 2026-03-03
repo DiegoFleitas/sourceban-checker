@@ -40,10 +40,7 @@ export function performFetch({
     });
 }
 
-export function getSteamId(
-  player: SteamId,
-  steamIdType?: SteamIdType
-): string {
+export function getSteamId(player: SteamId, steamIdType?: SteamIdType): string {
   if (steamIdType === "steam3") {
     return player.getSteam3RenderedID();
   }

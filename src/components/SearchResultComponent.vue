@@ -5,7 +5,9 @@
         search.domain
       }}</a>
     </td>
-    <td><span>{{ search.status }}</span></td>
+    <td>
+      <span>{{ search.status }}</span>
+    </td>
     <td>
       <a
         v-if="search.result === 'Banned'"
@@ -15,13 +17,17 @@
       >
         {{ search.result }}
       </a>
-      <a v-else-if="search.result === 'fail'" :href="getNewIssueUrl()" target="_blank">
+      <a
+        v-else-if="search.result === 'fail'"
+        :href="getNewIssueUrl()"
+        target="_blank"
+      >
         {{ search.result }}
       </a>
       <span v-else>{{ search.result }}</span>
     </td>
     <td>
-      <button @click="testSearch" class="table-action-button">Test</button>
+      <button class="table-action-button" @click="testSearch">Test</button>
     </td>
     <td>
       <div v-if="testResult === 'pass'">
@@ -29,11 +35,11 @@
       </div>
       <div v-else-if="testResult === 'fail'">
         <span class="danger">❌</span>
-        <a :href="getNewIssueUrl()"  target="_blank">Test failed</a>
+        <a :href="getNewIssueUrl()" target="_blank">Test failed</a>
       </div>
       <div v-else-if="testResult === 'error'">
         <span class="danger">❌</span>
-        <a :href="getNewIssueUrl()"  target="_blank">Test error</a>
+        <a :href="getNewIssueUrl()" target="_blank">Test error</a>
       </div>
     </td>
   </tr>
@@ -57,12 +63,26 @@ export default defineComponent({
       required: true,
     },
   },
+  computed: {
+    testResult(): string | undefined {
+      const self = this as unknown as {
+        search: SearchItem;
+        $store: { getters: { getTestResult: Record<string, string> } };
+      };
+      const domain = self.search.domain;
+      const tests = self.$store.getters.getTestResult;
+      return tests?.[domain];
+    },
+  },
   methods: {
     removeProxyFromUrl(url: string | null): string {
       return url?.replace(PROXY_URL, "") || "";
     },
     testSearch() {
-      const self = this as unknown as { search: SearchItem; $store: { dispatch: (a: string, b: string) => void } };
+      const self = this as unknown as {
+        search: SearchItem;
+        $store: { dispatch: (a: string, b: string) => void };
+      };
       self.$store.dispatch("testSearch", self.search.domain);
     },
     getNewIssueUrl(): string {
@@ -71,14 +91,6 @@ export default defineComponent({
       const title = `Scraping error - ${self.search.domain}`;
       const body = `Please fix :)`;
       return `${repoUrl}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}&labels=bug&assignee=DiegoFleitas`;
-    },
-  },
-  computed: {
-    testResult(): string | undefined {
-      const self = this as unknown as { search: SearchItem; $store: { getters: { getTestResult: Record<string, string> } } };
-      const domain = self.search.domain;
-      const tests = self.$store.getters.getTestResult;
-      return tests?.[domain];
     },
   },
 });

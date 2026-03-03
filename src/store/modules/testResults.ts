@@ -10,9 +10,9 @@ export interface TestResultsState {
 }
 
 const testResults: Module<TestResultsState, unknown> = {
-  state: {
+  state: (): TestResultsState => ({
     testResults: {},
-  },
+  }),
   mutations: {
     updateTestResult(
       state: TestResultsState,
@@ -22,10 +22,7 @@ const testResults: Module<TestResultsState, unknown> = {
     },
   },
   actions: {
-    testSearch(
-      { commit },
-      domain: string
-    ) {
+    testSearch({ commit }, domain: string) {
       const server = serversData.servers.find((sv) => sv.domain === domain);
       if (!server) return;
       const proxy = "https://stark-woodland-93683.fly.dev/";
