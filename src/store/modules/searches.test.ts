@@ -12,7 +12,7 @@ describe("searches store module", () => {
   it("getter progressCount formats servers checked count", () => {
     const store = createSearchesStore();
     expect(store.getters.progressCount).toMatch(
-      /^\[0 \/ \d+ servers being checked\]$/,
+      /^\[0 \/ \d+ servers being checked\]$/
     );
   });
 
