@@ -21,7 +21,7 @@
       <span v-else>{{ search.result }}</span>
     </td>
     <td>
-      <button @click="testSearch" class="test-button">Test</button>
+      <button @click="testSearch" class="table-action-button">Test</button>
     </td>
     <td>
       <div v-if="testResult === 'pass'">
