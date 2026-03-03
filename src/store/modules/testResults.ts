@@ -1,18 +1,33 @@
-import { performFetch } from "../../utils.js";
-import serversData from "../../servers.json";
+import { performFetch } from "@/utils";
+import type { Module } from "vuex";
+import type { ServersData } from "@/types";
+import serversDataJson from "@/servers.json";
 
-export default {
+const serversData = serversDataJson as ServersData;
+
+export interface TestResultsState {
+  testResults: Record<string, string>;
+}
+
+const testResults: Module<TestResultsState, unknown> = {
   state: {
     testResults: {},
   },
   mutations: {
-    updateTestResult(state, { domain, result }) {
-      state.testResults[domain] = result;
+    updateTestResult(
+      state: TestResultsState,
+      payload: { domain: string; result: string }
+    ) {
+      state.testResults[payload.domain] = payload.result;
     },
   },
   actions: {
-    testSearch({ commit }, domain) {
+    testSearch(
+      { commit },
+      domain: string
+    ) {
       const server = serversData.servers.find((sv) => sv.domain === domain);
+      if (!server) return;
       const proxy = "https://stark-woodland-93683.fly.dev/";
       const testUrl = proxy + server.example;
       performFetch({
@@ -31,8 +46,10 @@ export default {
     },
   },
   getters: {
-    getTestResult: (state) => {
+    getTestResult: (state: TestResultsState) => {
       return state.testResults;
     },
   },
 };
+
+export default testResults;

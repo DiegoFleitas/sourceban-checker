@@ -39,36 +39,49 @@
   </tr>
 </template>
 
-<script>
-export default {
-  name: 'SearchResultComponent',
+<script lang="ts">
+import { defineComponent } from "vue";
+import type { SearchItem } from "@/types";
+
+const PROXY_URL = "https://stark-woodland-93683.fly.dev/";
+
+export default defineComponent({
+  name: "SearchResultComponent",
   props: {
-    search: Object,
-    index: Number,
+    search: {
+      type: Object as () => SearchItem,
+      required: true,
+    },
+    index: {
+      type: Number,
+      required: true,
+    },
   },
   methods: {
-    removeProxyFromUrl(url) {
-      const proxyUrl = 'https://stark-woodland-93683.fly.dev/';
-      return url?.replace(proxyUrl, '') || '';
+    removeProxyFromUrl(url: string | null): string {
+      return url?.replace(PROXY_URL, "") || "";
     },
     testSearch() {
-      this.$store.dispatch('testSearch', this.search.domain);
+      const self = this as unknown as { search: SearchItem; $store: { dispatch: (a: string, b: string) => void } };
+      self.$store.dispatch("testSearch", self.search.domain);
     },
-    getNewIssueUrl() {
-      const repoUrl = 'https://github.com/DiegoFleitas/sourceban-checker';
-      const title = `Scraping error - ${this.search.domain}`;
+    getNewIssueUrl(): string {
+      const self = this as unknown as { search: SearchItem };
+      const repoUrl = "https://github.com/DiegoFleitas/sourceban-checker";
+      const title = `Scraping error - ${self.search.domain}`;
       const body = `Please fix :)`;
-      return `${repoUrl}/issues/new?title=${title}&body=${body}&labels=bug&assignee=DiegoFleitas`;
+      return `${repoUrl}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}&labels=bug&assignee=DiegoFleitas`;
     },
   },
   computed: {
-    testResult() {
-      const domain = this.search.domain
-      const tests = this.$store.getters.getTestResult;
+    testResult(): string | undefined {
+      const self = this as unknown as { search: SearchItem; $store: { getters: { getTestResult: Record<string, string> } } };
+      const domain = self.search.domain;
+      const tests = self.$store.getters.getTestResult;
       return tests?.[domain];
-    }
+    },
   },
-};
+});
 </script>
 
 <style scoped>

@@ -4,7 +4,6 @@ import App from "./App.vue";
 import store from "./store";
 import "./styles.css";
 
-// Define your routes. The routes you define here will depend on your application.
 const routes = [{ path: "/", component: App }];
 
 const router = createRouter({
@@ -12,4 +11,9 @@ const router = createRouter({
   routes,
 });
 
-createApp(App).use(store).use(router).mount("#app");
+// Vue shim types createApp as unknown; cast to use .use() and .mount()
+interface VueApp {
+  use: (p: unknown) => VueApp;
+  mount: (el: string) => void;
+}
+(createApp(App) as VueApp).use(store).use(router).mount("#app");

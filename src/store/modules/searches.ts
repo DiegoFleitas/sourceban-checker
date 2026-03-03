@@ -1,9 +1,20 @@
-import { performFetch, getSteamId, isCacheExpired } from "../../utils.js";
-import serversData from "../../servers.json";
+import { performFetch, getSteamId, isCacheExpired } from "@/utils";
+import type { Module } from "vuex";
+import type { SearchItem, ServersData } from "@/types";
+import serversDataJson from "@/servers.json";
 import localForage from "localforage";
 import SteamId from "steamid";
 
-export default {
+const serversData = serversDataJson as ServersData;
+
+export interface SearchesState {
+  searches: SearchItem[];
+  steamId: string;
+  serversChecked: number;
+  totalServers: number;
+}
+
+const searches: Module<SearchesState, unknown> = {
   state: {
     searches: serversData.servers.map((server) => ({
       domain: server.domain,
@@ -16,18 +27,21 @@ export default {
     totalServers: serversData.servers.length,
   },
   mutations: {
-    updateSearch(state, { domain, data }) {
+    updateSearch(
+      state: SearchesState,
+      payload: { domain: string; data: Partial<SearchItem> }
+    ) {
       const searchIndex = state.searches.findIndex(
-        (search) => search.domain === domain
+        (search) => search.domain === payload.domain
       );
       if (searchIndex !== -1) {
         state.searches[searchIndex] = {
           ...state.searches[searchIndex],
-          ...data,
+          ...payload.data,
         };
       }
     },
-    clearSearches(state) {
+    clearSearches(state: SearchesState) {
       state.searches = serversData.servers.map((server) => ({
         domain: server.domain,
         url: server.url,
@@ -35,27 +49,29 @@ export default {
         result: null,
       }));
     },
-
-    incrementServersChecked(state) {
+    incrementServersChecked(state: SearchesState) {
       state.serversChecked++;
     },
-    clearServersChecked(state) {
+    clearServersChecked(state: SearchesState) {
       state.serversChecked = 0;
     },
   },
   actions: {
-    async performSearch({ commit, state }, steamId) {
+    async performSearch({ commit }, steamId: string) {
       commit("clearServersChecked");
       const servers = serversData.servers;
       const proxy = "https://stark-woodland-93683.fly.dev/";
-      let player = new SteamId(steamId);
+      const player = new SteamId(steamId);
       servers.forEach(async (server) => {
         const domain = server.domain;
-        const steamId = getSteamId(player, server.steamIdType);
-        const url = `${proxy}${server.url}${steamId}`;
+        const resolvedSteamId = getSteamId(player, server.steamIdType);
+        const url = `${proxy}${server.url}${resolvedSteamId}`;
 
-        const cacheKey = `${steamId}_${domain}`;
-        const cachedData = await localForage.getItem(cacheKey);
+        const cacheKey = `${resolvedSteamId}_${domain}`;
+        const cachedData = await localForage.getItem<{
+          result: string;
+          timestamp: number;
+        }>(cacheKey);
 
         if (cachedData && !isCacheExpired(cachedData.timestamp)) {
           commit("updateSearch", {
@@ -93,7 +109,10 @@ export default {
         } catch (error) {
           commit("updateSearch", {
             domain,
-            data: { status: "error", result: error.toString() },
+            data: {
+              status: "error",
+              result: error instanceof Error ? error.toString() : String(error),
+            },
           });
         } finally {
           commit("incrementServersChecked");
@@ -105,15 +124,18 @@ export default {
     },
   },
   getters: {
-    sortedSearches: (state) => {
-      const searches = [...state.searches];
-
-      return searches.sort((a, b) => {
+    sortedSearches: (state: SearchesState) => {
+      const searchesList = [...state.searches];
+      return searchesList.sort((a, b) => {
         const statuses = ["Banned", "Not banned", "loading", "error"];
-        return statuses.indexOf(a.result) - statuses.indexOf(b.result);
+        const aIdx = statuses.indexOf(a.result ?? "");
+        const bIdx = statuses.indexOf(b.result ?? "");
+        return aIdx - bIdx;
       });
     },
-    progressCount: (state) =>
+    progressCount: (state: SearchesState) =>
       `[${state.serversChecked} / ${state.totalServers} servers being checked]`,
   },
 };
+
+export default searches;

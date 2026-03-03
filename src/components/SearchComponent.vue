@@ -22,32 +22,40 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "vue";
+
+export default defineComponent({
   name: "SearchComponent",
+  props: {
+    msg: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
-      steamId: "",
+      steamId: "" as string,
     };
-  },
-  props: {
-    msg: String,
   },
   methods: {
     search() {
-      if (!this.steamId) {
+      const self = this as unknown as { steamId: string; $store: { commit: (a: string) => void }; $emit: (e: string, v: string) => void };
+      if (!self.steamId) {
         return;
       }
-      this.$store.commit("clearSearches");
-      this.$emit("search", this.steamId);
+      self.$store.commit("clearSearches");
+      self.$emit("search", self.steamId);
     },
   },
   created() {
-    if (this.$route.query.steamid) {
-      this.steamId = this.$route.query.steamid;
+    const self = this as unknown as { $route: { query: { steamid?: string | string[] } }; steamId: string };
+    const steamid = self.$route.query.steamid;
+    if (steamid) {
+      self.steamId = Array.isArray(steamid) ? steamid[0] : steamid;
     }
   },
-};
+});
 </script>
 
 <style scoped>

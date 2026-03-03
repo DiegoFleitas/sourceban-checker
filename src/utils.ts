@@ -1,8 +1,12 @@
-import DomParser from "dom-parser";
 import SteamId from "steamid";
-import localForage from "localforage";
+import type { BanResult, PerformFetchOptions, SteamIdType } from "./types";
 
-export const performFetch = ({ url, xpath, selectorIndex, selectorText }) => {
+export function performFetch({
+  url,
+  xpath,
+  selectorIndex,
+  selectorText,
+}: PerformFetchOptions): Promise<BanResult> {
   return fetch(url)
     .then((response) => {
       if (!response.ok) {
@@ -22,9 +26,8 @@ export const performFetch = ({ url, xpath, selectorIndex, selectorText }) => {
           null
         )
         .snapshotItem(selectorIndex);
-      // outerText depends on visibilty
       console.log(url, element?.textContent);
-      let banStatus = "Not banned";
+      let banStatus: BanResult = "Not banned";
       const textToSearch = selectorText || "Permanent";
       if (element?.textContent?.includes(textToSearch)) {
         banStatus = "Banned";
@@ -33,28 +36,25 @@ export const performFetch = ({ url, xpath, selectorIndex, selectorText }) => {
     })
     .catch((error) => {
       console.log(error);
-      return "fail";
+      return "fail" as BanResult;
     });
-};
+}
 
-export const getSteamId = (player, steamIdType) => {
-  /**
-   * handles "STEAM_0" vs "STEAM_1" steam2 universe prefix
-   * ex: tf2 banlists use "STEAM_0", whereas csgo, l4d2, etc use "STEAM_1"
-   * see @https://developer.valvesoftware.com/wiki/SteamID#Universes_Available_for_Steam_Accounts
-   */
+export function getSteamId(
+  player: SteamId,
+  steamIdType?: SteamIdType
+): string {
   if (steamIdType === "steam3") {
     return player.getSteam3RenderedID();
-  } else if (steamIdType === "steam2_new") {
-    return player.getSteam2RenderedID(true);
-  } else {
-    // Default to steam2_old
-    return player.getSteam2RenderedID();
   }
-};
+  if (steamIdType === "steam2_new") {
+    return player.getSteam2RenderedID(true);
+  }
+  return player.getSteam2RenderedID();
+}
 
-export const isCacheExpired = (timestamp) => {
-  const oneWeek = 7 * 24 * 60 * 60 * 1000; // in milliseconds
+export function isCacheExpired(timestamp: number): boolean {
+  const oneWeek = 7 * 24 * 60 * 60 * 1000;
   const now = Date.now();
   return now - timestamp >= oneWeek;
-};
+}

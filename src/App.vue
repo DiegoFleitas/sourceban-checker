@@ -54,53 +54,57 @@
   </div>
 </template>
 
-<script>
-import { mapState, useStore } from 'vuex';
-import { useRoute } from 'vue-router';
-import { watch } from 'vue';
+<script lang="ts">
+import { defineComponent, watch } from "vue";
+import { mapState, useStore } from "vuex";
+import { useRoute } from "vue-router";
 
-import SearchComponent from './components/SearchComponent.vue';
-import SearchResultComponent from './components/SearchResultComponent.vue';
+import SearchComponent from "./components/SearchComponent.vue";
+import SearchResultComponent from "./components/SearchResultComponent.vue";
+import type { SearchItem } from "./types";
 
-function cleanSteamId(steamId) {
-  return steamId.replace(/\s/g, '');
+function cleanSteamId(steamId: string): string {
+  return steamId.replace(/\s/g, "");
 }
 
-export default {
-  name: 'App',
+export default defineComponent({
+  name: "App",
   components: {
     SearchComponent,
     SearchResultComponent,
   },
   computed: {
-    ...mapState(['searches']),
-    sortedSearches() {
-      return this.$store.getters.sortedSearches;
+    ...mapState(["searches"]),
+    sortedSearches(): SearchItem[] {
+      return (this as unknown as { $store: { getters: { sortedSearches: SearchItem[] } } }).$store.getters.sortedSearches;
     },
-    progressCount() {
-      return this.$store.getters.progressCount;
+    progressCount(): string {
+      return (this as unknown as { $store: { getters: { progressCount: string } } }).$store.getters.progressCount;
     },
   },
   methods: {
-    performSearch(steamId) {
-      this.$store.commit('setSteamID', cleanSteamId(steamId))
-      this.$store.dispatch('performSearch', steamId);
+    performSearch(steamId: string) {
+      const self = this as unknown as { $store: { commit: (a: string, b: string) => void; dispatch: (a: string, b: string) => void } };
+      self.$store.commit("setSteamID", cleanSteamId(steamId));
+      self.$store.dispatch("performSearch", steamId);
     },
-    
   },
   setup() {
     const route = useRoute();
     const store = useStore();
 
-    watch(() => route.query, (newQuery, oldQuery) => {
-      const steamId = newQuery?.steamid;
-      if (steamId) {
-        store.commit('setSteamID', cleanSteamId(steamId))
-        store.dispatch('performSearch', steamId);
+    watch(
+      () => route.query,
+      (newQuery: Record<string, string | string[]>) => {
+        const steamId = newQuery?.steamid;
+        if (steamId) {
+          store.commit("setSteamID", cleanSteamId(steamId as string));
+          store.dispatch("performSearch", steamId as string);
+        }
       }
-    });
+    );
   },
-};
+});
 </script>
 
 <style>
