@@ -13,7 +13,11 @@
           placeholder="Enter SteamID ex: STEAM_0:1:64716503"
           @keyup.enter="search"
         />
-        <button class="primary-button" :disabled="isSearchInFlight" @click="search">
+        <button
+          class="primary-button"
+          :disabled="isSearchInFlight"
+          @click="search"
+        >
           Search
         </button>
       </div>

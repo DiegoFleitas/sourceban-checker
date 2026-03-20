@@ -58,6 +58,8 @@ describe("SearchComponent", () => {
 
   it("disables Search button while search is in flight", async () => {
     const wrapper = await mountComponent({}, true);
-    expect(wrapper.find("button.primary-button").attributes("disabled")).toBeDefined();
+    expect(
+      wrapper.find("button.primary-button").attributes("disabled")
+    ).toBeDefined();
   });
 });
