@@ -24,6 +24,14 @@
       <p class="search-helper">
         Supports classic SteamID formats; whitespace is ignored.
       </p>
+      <a
+        :href="getMissingDomainIssueUrl()"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="secondary-link"
+      >
+        Missing a domain? Suggest it.
+      </a>
     </div>
   </div>
 </template>
@@ -63,6 +71,13 @@ export default defineComponent({
     },
   },
   methods: {
+    getMissingDomainIssueUrl(): string {
+      const repoUrl = "https://github.com/DiegoFleitas/sourceban-checker";
+      const title = "Missing domain suggestion";
+      const body =
+        "Please share the domain that is missing and any helpful context.";
+      return `${repoUrl}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
+    },
     search() {
       const self = this as unknown as {
         steamId: string;
@@ -95,5 +110,10 @@ export default defineComponent({
   .search-component {
     max-width: 100%;
   }
+}
+
+.secondary-link {
+  display: inline-block;
+  margin-top: 0.5rem;
 }
 </style>
