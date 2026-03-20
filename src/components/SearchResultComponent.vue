@@ -27,7 +27,13 @@
       <span v-else>{{ search.result }}</span>
     </td>
     <td>
-      <button class="table-action-button" @click="testSearch">Test</button>
+      <button
+        class="table-action-button"
+        :disabled="isTestInFlight"
+        @click="testSearch"
+      >
+        Test
+      </button>
     </td>
     <td>
       <div v-if="testResult === 'pass'">
@@ -72,6 +78,13 @@ export default defineComponent({
       const domain = self.search.domain;
       const tests = self.$store.getters.getTestResult;
       return tests?.[domain];
+    },
+    isTestInFlight(): boolean {
+      const self = this as unknown as {
+        search: SearchItem;
+        $store: { getters: { isTestRequestInFlight: (d: string) => boolean } };
+      };
+      return self.$store.getters.isTestRequestInFlight(self.search.domain);
     },
   },
   methods: {

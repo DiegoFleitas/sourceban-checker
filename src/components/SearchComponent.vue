@@ -13,7 +13,9 @@
           placeholder="Enter SteamID ex: STEAM_0:1:64716503"
           @keyup.enter="search"
         />
-        <button class="primary-button" @click="search">Search</button>
+        <button class="primary-button" :disabled="isSearchInFlight" @click="search">
+          Search
+        </button>
       </div>
       <p class="search-helper">
         Supports classic SteamID formats; whitespace is ignored.
@@ -47,6 +49,14 @@ export default defineComponent({
     if (steamid) {
       self.steamId = Array.isArray(steamid) ? steamid[0] : steamid;
     }
+  },
+  computed: {
+    isSearchInFlight(): boolean {
+      const self = this as unknown as {
+        $store: { getters: { isSearchInFlight: boolean } };
+      };
+      return self.$store.getters.isSearchInFlight;
+    },
   },
   methods: {
     search() {

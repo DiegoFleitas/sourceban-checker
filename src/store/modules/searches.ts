@@ -12,6 +12,7 @@ export interface SearchesState {
   steamId: string;
   serversChecked: number;
   totalServers: number;
+  searchInFlight: boolean;
 }
 
 const searches: Module<SearchesState, unknown> = {
@@ -25,6 +26,7 @@ const searches: Module<SearchesState, unknown> = {
     steamId: "",
     serversChecked: 0,
     totalServers: serversData.servers.length,
+    searchInFlight: false,
   },
   mutations: {
     updateSearch(
@@ -55,69 +57,82 @@ const searches: Module<SearchesState, unknown> = {
     clearServersChecked(state: SearchesState) {
       state.serversChecked = 0;
     },
+    setSearchInFlight(state: SearchesState, inFlight: boolean) {
+      state.searchInFlight = inFlight;
+    },
   },
   actions: {
-    async performSearch({ commit }, steamId: string) {
+    async performSearch({ commit, state }, steamId: string) {
+      if (state.searchInFlight) {
+        return;
+      }
+      commit("setSearchInFlight", true);
       commit("clearServersChecked");
       const servers = serversData.servers;
       const proxy = "https://stark-woodland-93683.fly.dev/";
       const player = new SteamId(steamId);
-      servers.forEach(async (server) => {
-        const domain = server.domain;
-        const resolvedSteamId = getSteamId(player, server.steamIdType);
-        const url = `${proxy}${server.url}${resolvedSteamId}`;
+      try {
+        await Promise.all(
+          servers.map(async (server) => {
+            const domain = server.domain;
+            const resolvedSteamId = getSteamId(player, server.steamIdType);
+            const url = `${proxy}${server.url}${resolvedSteamId}`;
 
-        const cacheKey = `${resolvedSteamId}_${domain}`;
-        const cachedData = await localForage.getItem<{
-          result: string;
-          timestamp: number;
-        }>(cacheKey);
+            const cacheKey = `${resolvedSteamId}_${domain}`;
+            const cachedData = await localForage.getItem<{
+              result: string;
+              timestamp: number;
+            }>(cacheKey);
 
-        if (cachedData && !isCacheExpired(cachedData.timestamp)) {
-          commit("updateSearch", {
-            domain,
-            data: {
-              url,
-              status: "complete",
-              result: cachedData.result,
-            },
-          });
-          commit("incrementServersChecked");
-          return;
-        }
+            if (cachedData && !isCacheExpired(cachedData.timestamp)) {
+              commit("updateSearch", {
+                domain,
+                data: {
+                  url,
+                  status: "complete",
+                  result: cachedData.result,
+                },
+              });
+              commit("incrementServersChecked");
+              return;
+            }
 
-        commit("updateSearch", {
-          domain,
-          data: { url, status: "loading", result: null },
-        });
+            commit("updateSearch", {
+              domain,
+              data: { url, status: "loading", result: null },
+            });
 
-        try {
-          const result = await performFetch({
-            url,
-            xpath: server.selector,
-            selectorIndex: server.selectorIndex,
-            selectorText: server?.selectorText,
-          });
-          await localForage.setItem(cacheKey, {
-            result,
-            timestamp: Date.now(),
-          });
-          commit("updateSearch", {
-            domain,
-            data: { status: "complete", result },
-          });
-        } catch (error) {
-          commit("updateSearch", {
-            domain,
-            data: {
-              status: "error",
-              result: error instanceof Error ? error.toString() : String(error),
-            },
-          });
-        } finally {
-          commit("incrementServersChecked");
-        }
-      });
+            try {
+              const result = await performFetch({
+                url,
+                xpath: server.selector,
+                selectorIndex: server.selectorIndex,
+                selectorText: server?.selectorText,
+              });
+              await localForage.setItem(cacheKey, {
+                result,
+                timestamp: Date.now(),
+              });
+              commit("updateSearch", {
+                domain,
+                data: { status: "complete", result },
+              });
+            } catch (error) {
+              commit("updateSearch", {
+                domain,
+                data: {
+                  status: "error",
+                  result: error instanceof Error ? error.toString() : String(error),
+                },
+              });
+            } finally {
+              commit("incrementServersChecked");
+            }
+          })
+        );
+      } finally {
+        commit("setSearchInFlight", false);
+      }
     },
     clearSearches({ commit }) {
       commit("clearSearches");
@@ -135,6 +150,7 @@ const searches: Module<SearchesState, unknown> = {
     },
     progressCount: (state: SearchesState) =>
       `[${state.serversChecked} / ${state.totalServers} servers being checked]`,
+    isSearchInFlight: (state: SearchesState) => state.searchInFlight,
   },
 };
 
