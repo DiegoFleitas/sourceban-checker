@@ -6,7 +6,7 @@ A web tool to quickly look up a Steam account and see if they have SourceBans ac
 
 ## Setup
 
-- **Node.js** >= 18.12.0 (see [.nvmrc](.nvmrc); recommend Node 20).
+- **Node.js** >= 24.0.0 (see [.nvmrc](.nvmrc); recommend Node 24).
 - **pnpm** (recommended; `packageManager` is set in `package.json`).
 
 ```bash
