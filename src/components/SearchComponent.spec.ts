@@ -62,4 +62,26 @@ describe("SearchComponent", () => {
       wrapper.find("button.primary-button").attributes("disabled")
     ).toBeDefined();
   });
+
+  it("renders a missing domain suggestion CTA", async () => {
+    const wrapper = await mountComponent();
+    const cta = wrapper.find("a.secondary-link");
+    expect(cta.exists()).toBe(true);
+    expect(cta.text()).toBe("Missing a domain? Suggest it.");
+  });
+
+  it("links CTA to a prefilled GitHub issue", async () => {
+    const wrapper = await mountComponent();
+    const ctaHref = wrapper.find("a.secondary-link").attributes("href");
+
+    expect(ctaHref).toContain(
+      "https://github.com/DiegoFleitas/sourceban-checker/issues/new"
+    );
+    expect(ctaHref).toContain(
+      `title=${encodeURIComponent("Missing domain suggestion")}`
+    );
+    expect(ctaHref).toContain(
+      `body=${encodeURIComponent("Please share the domain that is missing and any helpful context.")}`
+    );
+  });
 });
