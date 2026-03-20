@@ -5,15 +5,20 @@ import { createRouter, createMemoryHistory } from "vue-router";
 import SearchComponent from "./SearchComponent.vue";
 
 describe("SearchComponent", () => {
-  const mockStore = createStore({
-    state: { steamId: "" },
-    mutations: {
-      setSteamID: vi.fn(),
-      clearSearches: vi.fn(),
-    },
-  });
-
-  async function mountComponent(routeQuery: Record<string, string> = {}) {
+  async function mountComponent(
+    routeQuery: Record<string, string> = {},
+    isSearchInFlight = false
+  ) {
+    const mockStore = createStore({
+      state: { steamId: "" },
+      mutations: {
+        setSteamID: vi.fn(),
+        clearSearches: vi.fn(),
+      },
+      getters: {
+        isSearchInFlight: () => isSearchInFlight,
+      },
+    });
     const router = createRouter({
       history: createMemoryHistory(),
       routes: [{ path: "/", component: { template: "<div />" } }],
@@ -49,5 +54,10 @@ describe("SearchComponent", () => {
     const wrapper = await mountComponent();
     await wrapper.find("button.primary-button").trigger("click");
     expect(wrapper.emitted("search")).toBeFalsy();
+  });
+
+  it("disables Search button while search is in flight", async () => {
+    const wrapper = await mountComponent({}, true);
+    expect(wrapper.find("button.primary-button").attributes("disabled")).toBeDefined();
   });
 });

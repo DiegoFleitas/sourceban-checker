@@ -1,6 +1,28 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createStore } from "vuex";
+
+vi.mock("@/utils", () => ({
+  performFetch: vi.fn().mockResolvedValue("Not banned"),
+  getSteamId: vi.fn().mockReturnValue("resolved-id"),
+  isCacheExpired: vi.fn().mockReturnValue(true),
+}));
+
+vi.mock("localforage", () => ({
+  default: {
+    getItem: vi.fn().mockResolvedValue(null),
+    setItem: vi.fn().mockResolvedValue(undefined),
+  },
+}));
+
+vi.mock("steamid", () => ({
+  default: vi.fn(function SteamIdMock() {
+    return {};
+  }),
+}));
+
 import searches from "./searches";
+import { performFetch } from "@/utils";
+import localForage from "localforage";
 
 function createSearchesStore() {
   return createStore({
@@ -9,6 +31,17 @@ function createSearchesStore() {
 }
 
 describe("searches store module", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(performFetch).mockResolvedValue("Not banned");
+    vi.mocked(localForage.getItem).mockResolvedValue(null);
+    vi.mocked(localForage.setItem).mockResolvedValue(undefined);
+    (searches.state as { searchInFlight: boolean; serversChecked: number }).searchInFlight =
+      false;
+    (searches.state as { searchInFlight: boolean; serversChecked: number }).serversChecked =
+      0;
+  });
+
   it("getter progressCount formats servers checked count", () => {
     const store = createSearchesStore();
     expect(store.getters.progressCount).toMatch(
@@ -43,5 +76,32 @@ describe("searches store module", () => {
       expect(s.status).toBe(null);
       expect(s.result).toBe(null);
     });
+  });
+
+  it("action performSearch no-ops while a search is in flight", async () => {
+    const store = createSearchesStore();
+    (store.state as { searches: { searchInFlight: boolean } }).searches.searchInFlight =
+      true;
+
+    await store.dispatch("performSearch", "STEAM_0:1:64716503");
+
+    expect(localForage.getItem).not.toHaveBeenCalled();
+    expect(performFetch).not.toHaveBeenCalled();
+  });
+
+  it("action performSearch toggles in-flight state and clears it after completion", async () => {
+    const store = createSearchesStore();
+
+    expect(store.getters.isSearchInFlight).toBe(false);
+
+    const dispatchPromise = store.dispatch("performSearch", "STEAM_0:1:64716503");
+    expect(store.getters.isSearchInFlight).toBe(true);
+
+    await dispatchPromise;
+
+    expect(store.getters.isSearchInFlight).toBe(false);
+    expect((store.state as { searches: { serversChecked: number; totalServers: number } }).searches.serversChecked).toBe(
+      (store.state as { searches: { serversChecked: number; totalServers: number } }).searches.totalServers
+    );
   });
 });

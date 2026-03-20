@@ -7,11 +7,13 @@ const serversData = serversDataJson as ServersData;
 
 export interface TestResultsState {
   testResults: Record<string, string>;
+  testRequestsInFlight: Record<string, boolean>;
 }
 
 const testResults: Module<TestResultsState, unknown> = {
   state: (): TestResultsState => ({
     testResults: {},
+    testRequestsInFlight: {},
   }),
   mutations: {
     updateTestResult(
@@ -20,32 +22,43 @@ const testResults: Module<TestResultsState, unknown> = {
     ) {
       state.testResults[payload.domain] = payload.result;
     },
+    setTestRequestInFlight(
+      state: TestResultsState,
+      payload: { domain: string; inFlight: boolean }
+    ) {
+      state.testRequestsInFlight[payload.domain] = payload.inFlight;
+    },
   },
   actions: {
-    testSearch({ commit }, domain: string) {
+    async testSearch({ commit, state }, domain: string) {
+      if (state.testRequestsInFlight[domain]) return;
       const server = serversData.servers.find((sv) => sv.domain === domain);
       if (!server) return;
+      commit("setTestRequestInFlight", { domain, inFlight: true });
       const proxy = "https://stark-woodland-93683.fly.dev/";
       const testUrl = proxy + server.example;
-      performFetch({
-        url: testUrl,
-        xpath: server.selector,
-        selectorIndex: server.selectorIndex,
-        selectorText: server?.selectorText,
-      })
-        .then((banStatus) => {
-          const result = banStatus === "Banned" ? "pass" : "fail";
-          commit("updateTestResult", { domain, result });
-        })
-        .catch(() => {
-          commit("updateTestResult", { domain, result: "fail" });
+      try {
+        const banStatus = await performFetch({
+          url: testUrl,
+          xpath: server.selector,
+          selectorIndex: server.selectorIndex,
+          selectorText: server?.selectorText,
         });
+        const result = banStatus === "Banned" ? "pass" : "fail";
+        commit("updateTestResult", { domain, result });
+      } catch {
+        commit("updateTestResult", { domain, result: "fail" });
+      } finally {
+        commit("setTestRequestInFlight", { domain, inFlight: false });
+      }
     },
   },
   getters: {
     getTestResult: (state: TestResultsState) => {
       return state.testResults;
     },
+    isTestRequestInFlight: (state: TestResultsState) => (domain: string) =>
+      !!state.testRequestsInFlight[domain],
   },
 };
 
