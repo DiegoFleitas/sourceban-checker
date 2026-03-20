@@ -28,7 +28,10 @@ pnpm install
 | `pnpm typecheck` | Run TypeScript check (vue-tsc)     |
 | `pnpm format`  | Format code with Prettier            |
 | `pnpm format:check` | Check formatting with Prettier  |
-| `pnpm check`   | Lint + typecheck + test (CI gate)    |
+| `pnpm check`   | Format check + lint + typecheck + test (CI gate) |
+
+Git commits run a pre-commit hook (`lint-staged`) that auto-formats staged
+`src/**/*.{ts,vue,css,json}` files with Prettier before commit.
 
 ## Project structure
 

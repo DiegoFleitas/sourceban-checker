@@ -36,10 +36,12 @@ describe("searches store module", () => {
     vi.mocked(performFetch).mockResolvedValue("Not banned");
     vi.mocked(localForage.getItem).mockResolvedValue(null);
     vi.mocked(localForage.setItem).mockResolvedValue(undefined);
-    (searches.state as { searchInFlight: boolean; serversChecked: number }).searchInFlight =
-      false;
-    (searches.state as { searchInFlight: boolean; serversChecked: number }).serversChecked =
-      0;
+    (
+      searches.state as { searchInFlight: boolean; serversChecked: number }
+    ).searchInFlight = false;
+    (
+      searches.state as { searchInFlight: boolean; serversChecked: number }
+    ).serversChecked = 0;
   });
 
   it("getter progressCount formats servers checked count", () => {
@@ -80,8 +82,9 @@ describe("searches store module", () => {
 
   it("action performSearch no-ops while a search is in flight", async () => {
     const store = createSearchesStore();
-    (store.state as { searches: { searchInFlight: boolean } }).searches.searchInFlight =
-      true;
+    (
+      store.state as { searches: { searchInFlight: boolean } }
+    ).searches.searchInFlight = true;
 
     await store.dispatch("performSearch", "STEAM_0:1:64716503");
 
@@ -94,14 +97,27 @@ describe("searches store module", () => {
 
     expect(store.getters.isSearchInFlight).toBe(false);
 
-    const dispatchPromise = store.dispatch("performSearch", "STEAM_0:1:64716503");
+    const dispatchPromise = store.dispatch(
+      "performSearch",
+      "STEAM_0:1:64716503"
+    );
     expect(store.getters.isSearchInFlight).toBe(true);
 
     await dispatchPromise;
 
     expect(store.getters.isSearchInFlight).toBe(false);
-    expect((store.state as { searches: { serversChecked: number; totalServers: number } }).searches.serversChecked).toBe(
-      (store.state as { searches: { serversChecked: number; totalServers: number } }).searches.totalServers
+    expect(
+      (
+        store.state as {
+          searches: { serversChecked: number; totalServers: number };
+        }
+      ).searches.serversChecked
+    ).toBe(
+      (
+        store.state as {
+          searches: { serversChecked: number; totalServers: number };
+        }
+      ).searches.totalServers
     );
   });
 });

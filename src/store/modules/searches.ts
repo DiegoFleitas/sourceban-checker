@@ -122,7 +122,8 @@ const searches: Module<SearchesState, unknown> = {
                 domain,
                 data: {
                   status: "error",
-                  result: error instanceof Error ? error.toString() : String(error),
+                  result:
+                    error instanceof Error ? error.toString() : String(error),
                 },
               });
             } finally {
