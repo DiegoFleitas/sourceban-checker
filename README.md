@@ -6,29 +6,29 @@ A web tool to quickly look up a Steam account and see if they have SourceBans ac
 
 ## Setup
 
-- **Node.js** >= 24.0.0 (see [.nvmrc](.nvmrc); recommend Node 24).
-- **pnpm** (recommended; `packageManager` is set in `package.json`).
+- **[Bun](https://bun.sh)** >= 1.3.0 (`packageManager` is pinned in `package.json`).
+- **Node.js** >= 24.0.0 is optional; see [.nvmrc](.nvmrc) if you use Node-based editor tooling alongside Bun.
 
 ```bash
-pnpm install
+bun install
 ```
 
 ## Scripts
 
 | Script          | Description                          |
 |----------------|--------------------------------------|
-| `pnpm dev`     | Start dev server (Vite, port 8080)   |
-| `pnpm build`   | Production build (output in `dist/`)|
-| `pnpm preview` | Preview production build             |
-| `pnpm test`    | Run tests in watch mode (Vitest)     |
-| `pnpm test:run`| Run tests once                       |
-| `pnpm test:coverage` | Run tests with coverage report |
-| `pnpm lint`    | Run ESLint on `src/`                 |
-| `pnpm lint:fix`| Run ESLint with auto-fix             |
-| `pnpm typecheck` | Run TypeScript check (vue-tsc)     |
-| `pnpm format`  | Format code with Prettier            |
-| `pnpm format:check` | Check formatting with Prettier  |
-| `pnpm check`   | Format check + lint + typecheck + test (CI gate) |
+| `bun run dev`     | Start dev server (Vite, port 8080)   |
+| `bun run build`   | Production build (output in `dist/`)|
+| `bun run preview` | Preview production build             |
+| `bun run test`    | Run tests in watch mode (Vitest)     |
+| `bun run test:run`| Run tests once                       |
+| `bun run test:coverage` | Run tests with coverage report |
+| `bun run lint`    | Run ESLint on `src/`                 |
+| `bun run lint:fix`| Run ESLint with auto-fix             |
+| `bun run typecheck` | Run TypeScript check (vue-tsc)     |
+| `bun run format`  | Format code with Prettier            |
+| `bun run format:check` | Check formatting with Prettier  |
+| `bun run check`   | Format check + lint + typecheck + test (CI gate) |
 
 Git commits run a pre-commit hook (`lint-staged`) that auto-formats staged
 `src/**/*.{ts,vue,css,json}` files with Prettier before commit.

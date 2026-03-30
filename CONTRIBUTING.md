@@ -5,29 +5,29 @@ Thanks for your interest in contributing to sourceban-checker.
 ## Development setup
 
 1. Fork and clone the repo.
-2. Install dependencies: `pnpm install`
-3. Run the app: `pnpm dev`
+2. Install dependencies: `bun install`
+3. Run the app: `bun run dev`
 
 ## Before submitting
 
 Run the full check (lint, typecheck, tests):
 
 ```bash
-pnpm run check
+bun run check
 ```
 
 Optionally run formatting and fix lint issues:
 
 ```bash
-pnpm run format
-pnpm run lint:fix
+bun run format
+bun run lint:fix
 ```
 
 ## Code style
 
 - TypeScript strict mode; use the existing types in `src/types/`.
 - Vue: follow ESLint `plugin:vue/recommended` and the project’s Vue style.
-- Format with Prettier (config in `.prettierrc`); use `pnpm run format` before committing.
+- Format with Prettier (config in `.prettierrc`); use `bun run format` before committing.
 
 ## Pull requests
 
