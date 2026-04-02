@@ -29,11 +29,11 @@
     ]
   },
   "dependencies": {
-    "dom-parser": "^0.1.6",
+    "dom-parser": "^1.1.5",
     "localforage": "^1.10.0",
     "steamid": "^2.1.0",
     "vue": "^3.5.30",
-    "vue-router": "^4.6.4",
+    "vue-router": "^5.0.4",
     "vuex": "^4.1.0"
   },
   "devDependencies": {
@@ -53,7 +53,7 @@
     "jsdom": "^29.0.1",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.1",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.2",
     "vite": "^8.0.1",
     "vitest": "^4.1.0",
     "vue-eslint-parser": "^10.4.0",
