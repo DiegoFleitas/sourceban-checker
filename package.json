@@ -21,7 +21,7 @@
     "format": "prettier --write \"src/**/*.{ts,vue,css,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,vue,css,json}\"",
     "check": "bun run format:check && bun run lint && bun run typecheck && bun run test:run",
-    "prepare": "husky"
+    "setup:hooks": "node ./node_modules/husky/bin.js"
   },
   "lint-staged": {
     "src/**/*.{ts,vue,css,json}": [
