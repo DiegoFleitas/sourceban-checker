@@ -18,7 +18,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "allowJs": false,
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "vuex": ["./node_modules/vuex/types/index.d.ts"]
