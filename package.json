@@ -29,7 +29,6 @@
     ]
   },
   "dependencies": {
-    "dom-parser": "^1.1.5",
     "localforage": "^1.10.0",
     "steamid": "^2.1.0",
     "vue": "^3.5.30",
