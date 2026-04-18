@@ -8,7 +8,7 @@ A small web app to check whether a **SteamID** shows up on any of the configured
 
 ## Setup
 
-- **[Bun](https://bun.sh)** >= 1.3.0 (`packageManager` is pinned in `package.json`).
+- **[Bun](https://bun.sh)** >= 1.3.11 (`packageManager` is pinned in `package.json`).
 
 ```bash
 bun install
