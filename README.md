@@ -9,17 +9,12 @@ A small web app to check whether a **SteamID** shows up on any of the configured
 ## Setup
 
 - **[Bun](https://bun.sh)** >= 1.3.0 (`packageManager` is pinned in `package.json`).
-- **Node.js** >= 24.0.0 is optional; see [.nvmrc](.nvmrc) if you use Node-based editor tooling alongside Bun.
 
 ```bash
 bun install
 ```
 
-For local Git hooks (Husky / lint-staged), run once after cloning:
-
-```bash
-bun run setup:hooks
-```
+`prepare` runs **Husky** after install, so Git hooks are set up automatically. If hooks are missing, run `bun run prepare`.
 
 ## Scripts
 
@@ -37,7 +32,7 @@ bun run setup:hooks
 | `bun run format`       | Format code with Prettier                        |
 | `bun run format:check` | Check formatting with Prettier                   |
 | `bun run check`        | Format check + lint + typecheck + test (CI gate) |
-| `bun run setup:hooks`  | Install Husky Git hooks (run once per clone)     |
+| `bun run prepare`      | Reinstall Husky Git hooks (runs after `bun install`) |
 
 Git commits run a pre-commit hook (`lint-staged`) that auto-formats staged
 `src/**/*.{ts,vue,css,json}` files with Prettier before commit.
