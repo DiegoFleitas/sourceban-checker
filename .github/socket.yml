@@ -1,0 +1,5 @@
+version: 2
+github:
+  - repository: DiegoFleitas/sourceban-checker
+    opts:
+      branch: main
