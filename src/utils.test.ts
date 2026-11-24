@@ -138,4 +138,47 @@ describe("performFetch", () => {
 
     expect(result).toBe("Banned");
   });
+
+  it('fails closed with "fail" on a non-2xx response', async () => {
+    mockSnapshotText = "Permanent ban here";
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 500,
+        text: () => Promise.resolve('<div id="target">Permanent</div>'),
+      })
+    );
+
+    const result = await performFetch({
+      url: "https://example.com/bans",
+      xpath: "//div[@id='target']",
+      selectorIndex: 0,
+    });
+
+    expect(result).toBe("fail");
+  });
+
+  it('fails closed with "fail" when the response is not HTML', async () => {
+    mockSnapshotText = "Permanent ban here";
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        headers: {
+          get: (name: string) =>
+            name === "content-type" ? "application/json" : null,
+        },
+        text: () => Promise.resolve('{"error":"rate limited"}'),
+      })
+    );
+
+    const result = await performFetch({
+      url: "https://example.com/bans",
+      xpath: "//div[@id='target']",
+      selectorIndex: 0,
+    });
+
+    expect(result).toBe("fail");
+  });
 });

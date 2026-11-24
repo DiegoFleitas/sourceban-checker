@@ -9,33 +9,31 @@ export function performFetch({
 }: PerformFetchOptions): Promise<BanResult> {
   return fetch(url)
     .then((response) => {
-      if (!response.ok) {
-        console.log(response);
+      const contentType = response.headers?.get?.("content-type");
+      if (!response.ok || (contentType && !contentType.includes("text/html"))) {
+        return "fail" as BanResult;
       }
-      return response.text();
+      return response.text().then((decodedText) => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(decodedText, "text/html");
+        const element = doc
+          .evaluate(
+            xpath,
+            doc,
+            null,
+            XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+            null
+          )
+          .snapshotItem(selectorIndex);
+        let banStatus: BanResult = "Not banned";
+        const textToSearch = selectorText || "Permanent";
+        if (element?.textContent?.includes(textToSearch)) {
+          banStatus = "Banned";
+        }
+        return banStatus;
+      });
     })
-    .then((decodedText) => {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(decodedText, "text/html");
-      const element = doc
-        .evaluate(
-          xpath,
-          doc,
-          null,
-          XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-          null
-        )
-        .snapshotItem(selectorIndex);
-      console.log(url, element?.textContent);
-      let banStatus: BanResult = "Not banned";
-      const textToSearch = selectorText || "Permanent";
-      if (element?.textContent?.includes(textToSearch)) {
-        banStatus = "Banned";
-      }
-      return banStatus;
-    })
-    .catch((error) => {
-      console.log(error);
+    .catch(() => {
       return "fail" as BanResult;
     });
 }

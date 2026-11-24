@@ -25,6 +25,9 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Approve PR
+        # Only patch/minor bumps in the bun ecosystem are auto-approved.
+        # Majors and github-actions bumps need a human reviewer.
+        if: ${{ steps.metadata.outputs.update-type != 'version-update:semver-major' && steps.metadata.outputs.package-ecosystem != 'github-actions' }}
         run: |
           gh pr review --approve "$PR_URL"
         env:
@@ -32,6 +35,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Enable auto-merge (squash)
+        if: ${{ steps.metadata.outputs.update-type != 'version-update:semver-major' && steps.metadata.outputs.package-ecosystem != 'github-actions' }}
         run: |
           gh pr merge --auto --squash "$PR_URL"
         env:

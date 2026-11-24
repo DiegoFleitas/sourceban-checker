@@ -15,7 +15,10 @@ vi.mock("localforage", () => ({
 }));
 
 vi.mock("steamid", () => ({
-  default: vi.fn(function SteamIdMock() {
+  default: vi.fn(function SteamIdMock(steamId: string) {
+    if (steamId === "invalid") {
+      throw new Error("Unknown SteamID input format");
+    }
     return {};
   }),
 }));
@@ -23,6 +26,7 @@ vi.mock("steamid", () => ({
 import searches from "./searches";
 import { performFetch } from "@/utils";
 import localForage from "localforage";
+import SteamId from "steamid";
 
 function createSearchesStore() {
   return createStore({
@@ -119,5 +123,23 @@ describe("searches store module", () => {
         }
       ).searches.totalServers
     );
+  });
+
+  it("action performSearch rejects invalid input without a stuck in-flight flag", async () => {
+    const store = createSearchesStore();
+
+    await store.dispatch("performSearch", "invalid");
+
+    expect(store.getters.isSearchInFlight).toBe(false);
+    expect(performFetch).not.toHaveBeenCalled();
+  });
+
+  it("action performSearch trims whitespace before parsing", async () => {
+    const store = createSearchesStore();
+
+    await store.dispatch("performSearch", " STEAM_0:1:64716503 ");
+
+    expect(SteamId).toHaveBeenCalledWith("STEAM_0:1:64716503");
+    expect(store.getters.isSearchInFlight).toBe(false);
   });
 });

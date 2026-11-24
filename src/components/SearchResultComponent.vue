@@ -1,9 +1,12 @@
 <template>
   <tr class="search-result">
     <td>
-      <a :href="removeProxyFromUrl(search.url)" target="_blank">{{
-        search.domain
-      }}</a>
+      <a
+        :href="removeProxyFromUrl(search.url)"
+        target="_blank"
+        rel="noopener noreferrer"
+        >{{ search.domain }}</a
+      >
     </td>
     <td>
       <span>{{ search.status }}</span>
@@ -13,6 +16,7 @@
         v-if="search.result === 'Banned'"
         :href="removeProxyFromUrl(search.url)"
         target="_blank"
+        rel="noopener noreferrer"
         class="danger"
       >
         {{ search.result }}
@@ -21,6 +25,7 @@
         v-else-if="search.result === 'fail'"
         :href="getNewIssueUrl()"
         target="_blank"
+        rel="noopener noreferrer"
       >
         {{ search.result }}
       </a>
@@ -41,11 +46,15 @@
       </div>
       <div v-else-if="testResult === 'fail'">
         <span class="danger">❌</span>
-        <a :href="getNewIssueUrl()" target="_blank">Test failed</a>
+        <a :href="getNewIssueUrl()" target="_blank" rel="noopener noreferrer"
+          >Test failed</a
+        >
       </div>
       <div v-else-if="testResult === 'error'">
         <span class="danger">❌</span>
-        <a :href="getNewIssueUrl()" target="_blank">Test error</a>
+        <a :href="getNewIssueUrl()" target="_blank" rel="noopener noreferrer"
+          >Test error</a
+        >
       </div>
     </td>
   </tr>
