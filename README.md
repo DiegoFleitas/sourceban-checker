@@ -19,7 +19,7 @@ Check whether a **SteamID** appears on any of 80+ [SourceBans++](https://sbpp.gi
 ## How it works
 
 1. The app resolves the entered SteamID to the format each server expects.
-2. All banlist requests go through a CORS-bypass relay on [Fly.dev](https://fly.dev).
+2. Banlist requests go through a same-origin CORS relay implemented as a Netlify Function (`netlify/functions/relay.js`). It only proxies hosts listed in `src/servers.json`, re-validates every redirect hop, and holds no secrets.
 3. Each response gets parsed with `DOMParser` + XPath to detect ban status text.
 4. Results are stored in IndexedDB (via `localforage`) and expire after 7 days.
 5. The results table sorts by ban status: Banned → Not banned → loading → error.

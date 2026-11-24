@@ -1,9 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createStore } from "vuex";
 
-vi.mock("@/utils", () => ({
-  performFetch: vi.fn(),
-}));
+vi.mock("@/utils", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/utils")>();
+  return {
+    ...actual,
+    performFetch: vi.fn(),
+  };
+});
 
 import testResults from "./testResults";
 import { performFetch } from "@/utils";
@@ -56,6 +60,18 @@ describe("testResults store module", () => {
     await store.dispatch("testSearch", "skial.com");
 
     expect(performFetch).not.toHaveBeenCalled();
+  });
+
+  it("action testSearch requests the example ban page through the same-origin relay", async () => {
+    const store = createTestResultsStore();
+
+    await store.dispatch("testSearch", "skial.com");
+
+    const [request] = vi.mocked(performFetch).mock.calls[0];
+    expect(request.url.startsWith("/.netlify/functions/relay?url=")).toBe(true);
+    expect(new URLSearchParams(request.url.split("?")[1]).get("url")).toBe(
+      "https://www.skial.com/sourcebans/index.php?p=banlist&advType=steamid&advSearch=[U:1:1407862404]"
+    );
   });
 
   it("action testSearch toggles per-domain in-flight state", async () => {
