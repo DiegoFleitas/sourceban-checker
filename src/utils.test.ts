@@ -1,6 +1,46 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { getSteamId, isCacheExpired, performFetch } from "./utils";
+import {
+  buildRelayUrl,
+  extractTargetUrl,
+  getSteamId,
+  isCacheExpired,
+  performFetch,
+  RELAY_PATH,
+} from "./utils";
 import SteamId from "steamid";
+
+describe("relay URL helpers", () => {
+  it("builds a same-origin relay URL with the target percent-encoded", () => {
+    const target =
+      "https://www.skial.com/sourcebans/index.php?p=banlist&advSearch=STEAM_0:1:64716503";
+
+    const relayed = buildRelayUrl(target);
+
+    expect(RELAY_PATH).toBe("/.netlify/functions/relay");
+    expect(relayed.startsWith(`${RELAY_PATH}?url=`)).toBe(true);
+    // The upstream '?' and '&' must not leak into the relay query string.
+    expect(relayed.split("?")).toHaveLength(2);
+    expect(relayed).toContain(encodeURIComponent(target));
+    expect(new URLSearchParams(relayed.split("?")[1]).get("url")).toBe(target);
+  });
+
+  it("round-trips a target through buildRelayUrl and extractTargetUrl", () => {
+    const target =
+      "https://bans.scrap.tf/index.php?p=banlist&advType=steamid#results";
+
+    expect(extractTargetUrl(buildRelayUrl(target))).toBe(target);
+  });
+
+  it("returns an empty string for a missing URL", () => {
+    expect(extractTargetUrl(null)).toBe("");
+  });
+
+  it("leaves a URL that is not wrapped in the relay untouched", () => {
+    expect(extractTargetUrl("https://www.skial.com/bans")).toBe(
+      "https://www.skial.com/bans"
+    );
+  });
+});
 
 describe("getSteamId", () => {
   it("returns steam3 format when steamIdType is steam3", () => {
@@ -104,19 +144,42 @@ describe("performFetch", () => {
     expect(result).toBe("Not banned");
   });
 
-  it('returns "fail" when fetch rejects', async () => {
+  it('returns "error" (not "fail") when the transport rejects, so an outage is visible', async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockRejectedValue(new Error("Network error"))
     );
 
     const result = await performFetch({
-      url: "https://example.com/bans",
+      url: "/.netlify/functions/relay?url=https%3A%2F%2Fexample.com%2Fbans",
       xpath: "//div",
       selectorIndex: 0,
     });
 
-    expect(result).toBe("fail");
+    expect(result).toBe("error");
+  });
+
+  it('returns "error" when the relay marks its own failure', async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 502,
+        headers: {
+          get: (name: string) =>
+            name === "x-relay-error" ? "upstream_fetch_failed" : null,
+        },
+        text: () => Promise.resolve('{"error":"upstream_fetch_failed"}'),
+      })
+    );
+
+    const result = await performFetch({
+      url: "/.netlify/functions/relay?url=https%3A%2F%2Fexample.com%2Fbans",
+      xpath: "//div",
+      selectorIndex: 0,
+    });
+
+    expect(result).toBe("error");
   });
 
   it("uses custom selectorText when provided", async () => {

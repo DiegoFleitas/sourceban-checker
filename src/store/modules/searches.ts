@@ -1,4 +1,9 @@
-import { performFetch, getSteamId, isCacheExpired } from "@/utils";
+import {
+  buildRelayUrl,
+  performFetch,
+  getSteamId,
+  isCacheExpired,
+} from "@/utils";
 import type { Module } from "vuex";
 import type { SearchItem, ServersData } from "@/types";
 import serversDataJson from "@/servers.json";
@@ -75,13 +80,12 @@ const searches: Module<SearchesState, unknown> = {
       commit("setSearchInFlight", true);
       commit("clearServersChecked");
       const servers = serversData.servers;
-      const proxy = "https://stark-woodland-93683.fly.dev/";
       try {
         await Promise.all(
           servers.map(async (server) => {
             const domain = server.domain;
             const resolvedSteamId = getSteamId(player, server.steamIdType);
-            const url = `${proxy}${server.url}${resolvedSteamId}`;
+            const url = buildRelayUrl(`${server.url}${resolvedSteamId}`);
 
             const cacheKey = `${resolvedSteamId}_${domain}`;
             const cachedData = await localForage.getItem<{

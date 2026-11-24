@@ -1,11 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createStore } from "vuex";
 
-vi.mock("@/utils", () => ({
-  performFetch: vi.fn().mockResolvedValue("Not banned"),
-  getSteamId: vi.fn().mockReturnValue("resolved-id"),
-  isCacheExpired: vi.fn().mockReturnValue(true),
-}));
+vi.mock("@/utils", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/utils")>();
+  return {
+    ...actual,
+    performFetch: vi.fn().mockResolvedValue("Not banned"),
+    getSteamId: vi.fn().mockReturnValue("resolved-id"),
+    isCacheExpired: vi.fn().mockReturnValue(true),
+  };
+});
 
 vi.mock("localforage", () => ({
   default: {
@@ -132,6 +136,23 @@ describe("searches store module", () => {
 
     expect(store.getters.isSearchInFlight).toBe(false);
     expect(performFetch).not.toHaveBeenCalled();
+  });
+
+  it("action performSearch requests each banlist through the same-origin relay", async () => {
+    const store = createSearchesStore();
+
+    await store.dispatch("performSearch", "STEAM_0:1:64716503");
+
+    const firstCall = vi.mocked(performFetch).mock.calls[0][0];
+    expect(firstCall.url.startsWith("/.netlify/functions/relay?url=")).toBe(
+      true
+    );
+    const relayedTarget = new URLSearchParams(firstCall.url.split("?")[1]).get(
+      "url"
+    );
+    expect(relayedTarget).toBe(
+      "https://www.skial.com/sourcebans/index.php?p=banlist&advType=steamid&advSearch=resolved-id"
+    );
   });
 
   it("action performSearch trims whitespace before parsing", async () => {

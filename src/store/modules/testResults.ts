@@ -1,4 +1,4 @@
-import { performFetch } from "@/utils";
+import { buildRelayUrl, performFetch } from "@/utils";
 import type { Module } from "vuex";
 import type { ServersData } from "@/types";
 import serversDataJson from "@/servers.json";
@@ -35,8 +35,7 @@ const testResults: Module<TestResultsState, unknown> = {
       const server = serversData.servers.find((sv) => sv.domain === domain);
       if (!server) return;
       commit("setTestRequestInFlight", { domain, inFlight: true });
-      const proxy = "https://stark-woodland-93683.fly.dev/";
-      const testUrl = proxy + server.example;
+      const testUrl = buildRelayUrl(server.example);
       try {
         const banStatus = await performFetch({
           url: testUrl,

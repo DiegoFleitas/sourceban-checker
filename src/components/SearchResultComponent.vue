@@ -2,7 +2,7 @@
   <tr class="search-result">
     <td>
       <a
-        :href="removeProxyFromUrl(search.url)"
+        :href="toTargetUrl(search.url)"
         target="_blank"
         rel="noopener noreferrer"
         >{{ search.domain }}</a
@@ -14,7 +14,7 @@
     <td>
       <a
         v-if="search.result === 'Banned'"
-        :href="removeProxyFromUrl(search.url)"
+        :href="toTargetUrl(search.url)"
         target="_blank"
         rel="noopener noreferrer"
         class="danger"
@@ -63,8 +63,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import type { SearchItem } from "@/types";
-
-const PROXY_URL = "https://stark-woodland-93683.fly.dev/";
+import { extractTargetUrl } from "@/utils";
 
 export default defineComponent({
   name: "SearchResultComponent",
@@ -97,8 +96,8 @@ export default defineComponent({
     },
   },
   methods: {
-    removeProxyFromUrl(url: string | null): string {
-      return url?.replace(PROXY_URL, "") || "";
+    toTargetUrl(relayedUrl: string | null): string {
+      return extractTargetUrl(relayedUrl);
     },
     testSearch() {
       const self = this as unknown as {
