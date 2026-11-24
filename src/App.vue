@@ -103,10 +103,12 @@ export default defineComponent({
     watch(
       () => route.query,
       (newQuery: Record<string, string | string[]>) => {
-        const steamId = newQuery?.steamid;
+        const rawSteamId = newQuery?.steamid;
+        const steamId = Array.isArray(rawSteamId) ? rawSteamId[0] : rawSteamId;
         if (steamId) {
-          store.commit("setSteamID", cleanSteamId(steamId as string));
-          store.dispatch("performSearch", steamId as string);
+          const cleanedSteamId = cleanSteamId(steamId);
+          store.commit("setSteamID", cleanedSteamId);
+          store.dispatch("performSearch", cleanedSteamId);
         }
       }
     );
@@ -135,7 +137,7 @@ export default defineComponent({
         };
       };
       self.$store.commit("setSteamID", cleanSteamId(steamId));
-      self.$store.dispatch("performSearch", steamId);
+      self.$store.dispatch("performSearch", cleanSteamId(steamId));
     },
   },
 });

@@ -33,4 +33,4 @@ export interface PerformFetchOptions {
   selectorText?: string;
 }
 
-export type TestResult = "pass" | "fail";
+export type TestResult = "pass" | "fail" | "error";

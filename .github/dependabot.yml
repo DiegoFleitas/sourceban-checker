@@ -7,10 +7,14 @@ updates:
     open-pull-requests-limit: 1
     target-branch: "main"
     groups:
+      # Group only patch/minor releases. Major bumps stay as separate PRs and
+      # are not auto-merged (see dependabot-auto-merge.yml).
       all-deps:
         patterns:
           - "*"
-          - "*"
+        update-types:
+          - "patch"
+          - "minor"
 
   - package-ecosystem: "github-actions"
     directory: "/"

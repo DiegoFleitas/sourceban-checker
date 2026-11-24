@@ -5,9 +5,19 @@ dist
 .env
 .env.local
 .env.*.local
+.env.development
+.env.production
 coverage
 *.log
 .DS_Store
+
+# Local agent tooling (never commit)
+.agents/
+.opencode/
+.playwright/
+AGENTS.md
+STEP_ZERO.md
+opencode.jsonc
 
 # Editor / IDE
 .idea

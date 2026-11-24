@@ -66,11 +66,16 @@ const searches: Module<SearchesState, unknown> = {
       if (state.searchInFlight) {
         return;
       }
+      let player: SteamId;
+      try {
+        player = new SteamId(steamId.replace(/\s/g, ""));
+      } catch {
+        return;
+      }
       commit("setSearchInFlight", true);
       commit("clearServersChecked");
       const servers = serversData.servers;
       const proxy = "https://stark-woodland-93683.fly.dev/";
-      const player = new SteamId(steamId);
       try {
         await Promise.all(
           servers.map(async (server) => {
@@ -117,13 +122,12 @@ const searches: Module<SearchesState, unknown> = {
                 domain,
                 data: { status: "complete", result },
               });
-            } catch (error) {
+            } catch {
               commit("updateSearch", {
                 domain,
                 data: {
                   status: "error",
-                  result:
-                    error instanceof Error ? error.toString() : String(error),
+                  result: "error",
                 },
               });
             } finally {

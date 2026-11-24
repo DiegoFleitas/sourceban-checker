@@ -47,7 +47,7 @@ const testResults: Module<TestResultsState, unknown> = {
         const result = banStatus === "Banned" ? "pass" : "fail";
         commit("updateTestResult", { domain, result });
       } catch {
-        commit("updateTestResult", { domain, result: "fail" });
+        commit("updateTestResult", { domain, result: "error" });
       } finally {
         commit("setTestRequestInFlight", { domain, inFlight: false });
       }
