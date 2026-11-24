@@ -6,12 +6,16 @@
 //   /.netlify/functions/relay?url=<percent-encoded absolute http(s) URL>
 //
 // Security posture:
-//   - only `http:` / `https:` targets whose hostname is in SOURCEBANS_DOMAINS;
-//   - every redirect hop is re-validated against the same allowlist;
+//   - only `http:` / `https:` targets whose hostname matches SOURCEBANS_DOMAINS
+//     exactly (no subdomain inheritance) and that use the scheme's default port;
+//   - every redirect hop is re-validated against the same rules;
 //   - IP literals, loopback, link-local and `.local`/`.internal` names are
 //     rejected outright (SSRF guard, defence in depth on top of the allowlist);
 //   - 10s total deadline, max 3 redirects, 2 MB response cap;
-//   - only HTML responses are relayed, and the content-type is normalised.
+//   - only an explicit `text/html` response is relayed — a missing content-type
+//     fails closed — and the content-type is normalised;
+//   - function responses carry their own sandbox CSP because `_headers` does
+//     not apply to functions.
 //
 // Relay-level failures carry an `x-relay-error` header so the client can tell an
 // upstream ban-page failure ("fail", fail-closed per SB-04) apart from a broken
@@ -140,6 +144,10 @@ const SOURCEBANS_DOMAINS = new Set([
 
 const BASE_RESPONSE_HEADERS = {
   "cache-control": "no-store",
+  // Netlify's `public/_headers` does not apply to function responses, so the
+  // relay carries its own sandbox CSP: a relayed ban page is inert even if an
+  // allowlisted upstream ever turns hostile.
+  "content-security-policy": "sandbox; default-src 'none'",
   "x-content-type-options": "nosniff",
 };
 
@@ -161,16 +169,11 @@ function isPrivateIpv4(hostname) {
 }
 
 function isAllowlistedHostname(hostname) {
-  if (SOURCEBANS_DOMAINS.has(hostname)) return true;
-  // Servers are tracked by registrable domain (e.g. "skial.com") but several
-  // serve their banlist from a subdomain (e.g. "www.skial.com"). Walk the label
-  // suffixes so any listed domain covers its subdomains, while "skial.com.evil"
-  // and "evilskial.com" stay out.
-  const labels = hostname.split(".");
-  for (let index = 1; index < labels.length; index += 1) {
-    if (SOURCEBANS_DOMAINS.has(labels.slice(index).join("."))) return true;
-  }
-  return false;
+  // Exact hostname match only. scripts/generate-relay-allowlist.mjs enumerates
+  // every `domain`, `url` and `example` host from src/servers.json, so any
+  // subdomain that really serves a banlist is listed on its own. No label-suffix
+  // walk: "totally-new.skial.com" must not inherit "skial.com".
+  return SOURCEBANS_DOMAINS.has(hostname);
 }
 
 function relayError(statusCode, errorCode) {
@@ -207,6 +210,12 @@ export function isAllowlistedTarget(rawUrl) {
   }
   if (!ALLOWED_PROTOCOLS.has(parsedUrl.protocol)) return null;
   if (parsedUrl.username || parsedUrl.password) return null;
+  // Non-default ports are rejected on the requested URL and on every redirect
+  // hop (both go through this function). Without it an allowlisted hostname
+  // could point the relay at an unrelated service on that box — Redis on :6379,
+  // an admin UI on :8443, a local proxy on :8080. `URL#port` is "" only for the
+  // scheme's default port.
+  if (parsedUrl.port !== "") return null;
 
   const hostname = parsedUrl.hostname.toLowerCase();
   if (isForbiddenHostname(hostname)) return null;
@@ -216,8 +225,11 @@ export function isAllowlistedTarget(rawUrl) {
 }
 
 function normaliseContentType(contentType) {
-  const value = (contentType || "").toLowerCase();
-  if (!value) return "text/html; charset=utf-8";
+  const value = (contentType || "").trim().toLowerCase();
+  // Fail closed: with no content-type we cannot prove the body is a ban page,
+  // so it is rejected instead of being assumed text/html and rendered on our
+  // own origin.
+  if (!value) return null;
   if (!value.includes("text/html")) return null;
   if (value.includes("charset=")) return value;
   return `${value}; charset=utf-8`;
@@ -310,10 +322,16 @@ export async function handler(event) {
       redirectsFollowed += 1;
     }
 
-    const contentType = normaliseContentType(upstreamResponse.headers?.get?.("content-type"));
+    const rawContentType = upstreamResponse.headers?.get?.("content-type");
+    const contentType = normaliseContentType(rawContentType);
     if (!contentType) {
       await upstreamResponse.body?.cancel();
-      return relayError(502, "upstream_not_html");
+      // Fail closed, and tell an outage apart from a wrong answer: no header at
+      // all is a relay-level error, a non-HTML type is an upstream answer.
+      return relayError(
+        502,
+        rawContentType?.trim() ? "upstream_not_html" : "upstream_missing_content_type"
+      );
     }
 
     const { tooLarge, text } = await readBodyWithCap(upstreamResponse);

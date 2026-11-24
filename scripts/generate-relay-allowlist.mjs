@@ -2,7 +2,7 @@
 // netlify/functions/relay.js from src/servers.json (the single source of truth).
 //
 // Run with: bun scripts/generate-relay-allowlist.mjs
-// The unit test netlify/functions/relay.test.js fails when the two drift apart.
+// The unit test tests/netlify/relay.test.js fails when the two drift apart.
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";

@@ -1,11 +1,16 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { handler, isAllowlistedTarget } from "./relay.js";
+import { handler, isAllowlistedTarget } from "../../netlify/functions/relay.js";
 
-const functionDir = dirname(fileURLToPath(import.meta.url));
-const repoRoot = resolve(functionDir, "../..");
+// This test lives outside netlify/functions on purpose: Netlify packages every
+// .js file in the functions directory as a function, and `relay.test.js` was
+// rejected as an invalid function name (`relay.test`).
+const testDir = dirname(fileURLToPath(import.meta.url));
+const repoRoot = resolve(testDir, "../..");
+const relayPath = resolve(repoRoot, "netlify/functions/relay.js");
+const functionsDir = resolve(repoRoot, "netlify/functions");
 
 const ALLOWED_URL = "https://www.skial.com/sourcebans/index.php?p=banlist&advSearch=STEAM_0:1:64716503";
 const ALLOWED_URL_SECOND = "https://lazypurple.com/sourcebans/index.php?p=banlist";
@@ -71,6 +76,37 @@ describe("relay allowlist", () => {
     expect(isAllowlistedTarget("https://www.skial.com.evil.example/")).toBe(null);
   });
 
+  it("rejects subdomains that the allowlist does not name explicitly", () => {
+    for (const target of [
+      "https://totally-new.skial.com/index.php?p=banlist",
+      "https://a.b.skial.com/index.php?p=banlist",
+      "https://evilskial.com/",
+      "https://notskial.com/",
+    ]) {
+      expect(isAllowlistedTarget(target)).toBe(null);
+    }
+  });
+
+  it("rejects any non-default port on an otherwise allowlisted host", () => {
+    for (const target of [
+      "https://www.skial.com:8443/sourcebans/index.php",
+      "http://bans.scrap.tf:8080/index.php",
+      "http://lazypurple.com:6379/",
+      "https://lazypurple.com:6379/",
+    ]) {
+      expect(isAllowlistedTarget(target)).toBe(null);
+    }
+  });
+
+  it("still accepts the scheme's default port", () => {
+    expect(isAllowlistedTarget("https://www.skial.com:443/index.php")?.hostname).toBe(
+      "www.skial.com"
+    );
+    expect(isAllowlistedTarget("http://lazypurple.com:80/index.php")?.hostname).toBe(
+      "lazypurple.com"
+    );
+  });
+
   it("rejects loopback, private and .local targets (SSRF guard)", () => {
     for (const target of [
       "http://localhost:8080/",
@@ -123,7 +159,7 @@ describe("relay allowlist", () => {
     }
     const expectedDomains = [...expectedDomainSet].sort();
 
-    const relaySource = readFileSync(resolve(functionDir, "relay.js"), "utf8");
+    const relaySource = readFileSync(relayPath, "utf8");
     const generatedBlock = relaySource.slice(
       relaySource.indexOf("// <generated:allowlist>"),
       relaySource.indexOf("// </generated:allowlist>")
@@ -131,6 +167,14 @@ describe("relay allowlist", () => {
     const embeddedDomains = [...generatedBlock.matchAll(/"([^"]+)"/g)].map((match) => match[1]);
 
     expect(embeddedDomains).toEqual(expectedDomains);
+  });
+});
+
+describe("netlify function packaging", () => {
+  it("keeps only relay.js in netlify/functions so exactly one valid function is deployed", () => {
+    const entries = readdirSync(functionsDir).filter((name) => !name.startsWith("."));
+
+    expect(entries).toEqual(["relay.js"]);
   });
 });
 
@@ -180,6 +224,20 @@ describe("relay handler", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it("rejects an explicit non-default port without fetching it", async () => {
+    for (const url of [
+      "https://www.skial.com:8443/sourcebans/index.php",
+      "http://bans.scrap.tf:8080/index.php",
+      "http://lazypurple.com:6379/",
+    ]) {
+      const response = await invoke({ url });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.headers["x-relay-error"]).toBe("host_not_allowlisted");
+    }
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it("follows a redirect to another allowlisted host", async () => {
     fetchMock
       .mockResolvedValueOnce(makeResponse({ status: 302, location: ALLOWED_URL_SECOND, body: null }))
@@ -207,6 +265,35 @@ describe("relay handler", () => {
   it("re-validates the allowlist on every redirect hop", async () => {
     fetchMock.mockResolvedValueOnce(
       makeResponse({ status: 302, location: "https://attacker.example/steal", body: null })
+    );
+
+    const response = await invoke({ url: ALLOWED_URL });
+
+    expect(response.statusCode).toBe(400);
+    expect(response.headers["x-relay-error"]).toBe("redirect_host_not_allowlisted");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects a redirect hop that adds a non-default port", async () => {
+    for (const location of [
+      "https://www.skial.com:8443/sourcebans/index.php",
+      "http://lazypurple.com:8080/",
+      "http://lazypurple.com:6379/",
+    ]) {
+      fetchMock.mockReset();
+      fetchMock.mockResolvedValueOnce(makeResponse({ status: 302, location, body: null }));
+
+      const response = await invoke({ url: ALLOWED_URL });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.headers["x-relay-error"]).toBe("redirect_host_not_allowlisted");
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    }
+  });
+
+  it("rejects a redirect hop to an unlisted subdomain", async () => {
+    fetchMock.mockResolvedValueOnce(
+      makeResponse({ status: 302, location: "https://a.b.skial.com/index.php", body: null })
     );
 
     const response = await invoke({ url: ALLOWED_URL });
@@ -247,6 +334,25 @@ describe("relay handler", () => {
     expect(response.headers["x-relay-error"]).toBe("upstream_not_html");
   });
 
+  it("fails closed when the upstream sends no content-type", async () => {
+    fetchMock.mockResolvedValue(makeResponse({ contentType: null }));
+
+    const response = await invoke({ url: ALLOWED_URL });
+
+    expect(response.statusCode).toBe(502);
+    expect(response.headers["x-relay-error"]).toBe("upstream_missing_content_type");
+    expect(response.body).toBe(JSON.stringify({ error: "upstream_missing_content_type" }));
+  });
+
+  it("fails closed on an empty content-type header", async () => {
+    fetchMock.mockResolvedValue(makeResponse({ contentType: "   " }));
+
+    const response = await invoke({ url: ALLOWED_URL });
+
+    expect(response.statusCode).toBe(502);
+    expect(response.headers["x-relay-error"]).toBe("upstream_missing_content_type");
+  });
+
   it("rejects an upstream body larger than the cap", async () => {
     fetchMock.mockResolvedValue(makeResponse({ contentLength: 5 * 1024 * 1024 }));
 
@@ -273,6 +379,20 @@ describe("relay handler", () => {
     expect(response.statusCode).toBe(503);
     expect(response.headers["x-relay-error"]).toBeUndefined();
     expect(response.headers["x-relay-upstream-status"]).toBe("503");
+  });
+
+  it("sets its own sandbox CSP and nosniff on relayed pages", async () => {
+    const response = await invoke({ url: ALLOWED_URL });
+
+    expect(response.headers["content-security-policy"]).toBe("sandbox; default-src 'none'");
+    expect(response.headers["x-content-type-options"]).toBe("nosniff");
+  });
+
+  it("sets the sandbox CSP and nosniff on relay error responses too", async () => {
+    const response = await invoke({ url: "https://attacker.example/steal" });
+
+    expect(response.headers["content-security-policy"]).toBe("sandbox; default-src 'none'");
+    expect(response.headers["x-content-type-options"]).toBe("nosniff");
   });
 
   it("maps a timeout to 504", async () => {
@@ -320,7 +440,7 @@ describe("relay handler", () => {
   });
 
   it("uses no environment secrets", () => {
-    const source = readFileSync(resolve(functionDir, "relay.js"), "utf8");
+    const source = readFileSync(relayPath, "utf8");
 
     expect(source).not.toMatch(/process\.env/);
   });
